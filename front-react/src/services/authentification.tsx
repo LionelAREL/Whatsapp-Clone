@@ -1,0 +1,105 @@
+import React from "react";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
+
+const ACCOUNT_URL = "http://127.0.0.1:8000/account/";
+const API_URL = "http://127.0.0.1:8000/api/";
+
+const getSession = () => {
+return fetch(ACCOUNT_URL + "session/", {
+      credentials: "include",
+  })
+  .then((res) => res.json())
+  .then((data) => {
+      console.log(data)
+      return data;
+  })
+  .catch((err) => {
+      console.log(err);
+  });
+};
+
+const getCSRFToken = () => {
+  fetch(ACCOUNT_URL + "CSRFToken/",{credentials: "include"})
+  .then((data) => {
+      console.log(data);
+  })
+  .catch((err) => {
+      console.log(err);
+  });
+};
+
+const isResponseOk = (response:any) =>  {
+  if (Number(response.status) >= 200 && Number(response.status) <= 299) {
+      return response.json();
+  } else {
+    return Promise.reject(response.json())
+  }
+};
+
+const login = (username:string,password:string) => {
+  const _username = username.toString()
+  const _password = password.toString()
+  return fetch(ACCOUNT_URL + "login/", {
+      method: "POST",
+      headers: {
+      "Content-Type": "application/json",
+      "X-Csrftoken": cookies.get("csrftoken"),
+      },
+      credentials: "include",
+      body: JSON.stringify({username: _username, password: _password}),
+  })
+  .then(isResponseOk)
+  .then((data) => {
+      return data;
+  })
+};
+const signUp = (username:string,password:string) => {
+  const _username = username.toString()
+  const _password = password.toString()
+  return fetch(API_URL + "users/", {
+      method: "POST",
+      headers: {
+      "Content-Type": "application/json",
+      "X-Csrftoken": cookies.get("csrftoken"),
+      },
+      credentials: "include",
+      body: JSON.stringify({username: _username, password: _password}),
+  })
+  .then(isResponseOk)
+  .then((data) => {
+      console.log(data);
+      return data;
+  })
+  .catch((err) => {
+        return Promise.reject(err)
+  });
+};
+
+const logout = () => {
+  fetch(ACCOUNT_URL + "logout/", {
+      credentials: "include",
+  })
+  .then(isResponseOk)
+  .then((data) => {
+      console.log(data);
+  }).then(() =>{
+    document.location.assign('/login');}
+  )
+  .catch((err) => {
+      return 
+  });
+};
+
+
+const AuthService = {
+  login,
+  logout,
+  ACCOUNT_URL,
+  getCSRFToken,
+  getSession,
+  signUp
+};
+
+export default AuthService;
