@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.viewsets import ReadOnlyModelViewSet,ModelViewSet
 from rest_framework.generics import ListAPIView,CreateAPIView
 from rest_framework.mixins import UpdateModelMixin
-from .models import Publication
+from .models import Publication, Friend
 from .serializers import *
 from django.shortcuts import get_object_or_404
 from account.models import ChatGroup,ChatPrivate
@@ -40,7 +40,9 @@ class UserViewset(MultipleSerializerMixin,ModelViewSet):
     update_serializer_class = UserCreateSerializer
     serializer_class = UserListSerializer
     detail_serializer_class = UserDetailSerializer
-    queryset = get_user_model().objects.all()
+    def get_queryset(self):
+        return get_user_model().objects.exclude(id=self.request.user.id)
+
 
     
 
@@ -122,6 +124,9 @@ class FriendsViews(ListAPIView):
         if(not self.request.user.friends.friends.exists()):
             return None
         return self.request.user.friends.friends.exclude(id=self.request.user.id)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
     
 class RequestFriendsViews(ListAPIView):
     serializer_class = UserListSerializer
@@ -131,6 +136,9 @@ class RequestFriendsViews(ListAPIView):
     def get_queryset(self):
         if(not self.request.user.friends.request_friends.exists()):
             return None
+        for friends_request in Friend.objects.get(user=self.request.user).friends.all() :
+            print(friends_request)
+            Friend.objects.get(user=self.request.user).request_friends.remove(friends_request)
         return self.request.user.friends.request_friends.exclude(id=self.request.user.id)
 
 class ChatViews(ListAPIView):

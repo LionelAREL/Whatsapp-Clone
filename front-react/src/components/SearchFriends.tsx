@@ -3,22 +3,36 @@ import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { RootState } from '../redux/Store';
 import fetchData from '../services/fetch';
-import { WebsocketContext } from '../services/websocket';
+import { WebSocketContext } from '../services/websocket';
 import { backgroundColor, backgroundColor2, borderColor, colorIcon } from '../style/variable';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Button from '@mui/material/Button';
+import LoadingWrapper from './LoadingWrapper';
 
 
-const SearchFriend = () => {
+
+const SearchFriend = ({setCurrentdispalySide}:any) => {
     const [friendsSearch,setFriendsSearch] = useState([]);
-    const session = useSelector((state: RootState) => state.session)
-    const chatSocket:any = useContext(WebsocketContext);
+    const session = useSelector((state: RootState) => state.session);
+    const chatSocket:any = useContext(WebSocketContext);
+    const [lastSearch,setLastSearch] = useState("");
+    const [loading,setLoading] = useState(false);
+
 
     const search = (e:any) =>{
-        if (e.key === 'Enter') {
+        if (e?.key === 'Enter') {
             let searchUser:any = document.querySelector("#search-friends");
             let username = searchUser.value; 
+            setLastSearch(searchUser.value);
+            setLoading(true)
             fetchData.getSearchUsers(username).then((data) => {setFriendsSearch(data);console.log(data)});
+            setLoading(false)
+
+        }
+        else if(e == undefined){
+            setLoading(true)
+            fetchData.getSearchUsers(lastSearch).then((data) => {setFriendsSearch(data);console.log(data)});
+            setLoading(false)
         }
     }
 
@@ -30,34 +44,58 @@ const SearchFriend = () => {
             'user_to': user.id,
         }));
         console.log("msg envoyé");
+        search(undefined);
+    }
+
+    const createGroup = () => {
+        setCurrentdispalySide(3)
     }
 
     return (
         <Container>
             <Input id="search-friends" onKeyDown={search} />
-            <ContainerList>
-                {
-                    friendsSearch.map((friend:any) => {
-                        return(
-                            <FriendSearch>
-                                <ProfilImage/>
-                                <Text>
-                                    <div>
+            <ButtonCreateGroup onClick={() => createGroup()}>Create new groupe</ButtonCreateGroup>
+            <LoadingWrapper loading={loading}>
 
-                                    {friend.username}
-                                    </div>
-                                    <div>
+                <ContainerList>
+                    {
+                        friendsSearch.map((friend:any) => {
+                            return(
+                                <FriendSearch key={friend.id}>
+                                    <ProfilImage/>
+                                    <Text>
+                                        <div>
+
+                                        {friend.username}
+                                        </div>
+                                        <div>
+                                        {friend.status == "friend" ? 
+                                            <div>already friend</div>:
+                                            ""
+                                            }
+                                            {friend.status == "request_send" ? 
+                                            <div>already send</div>:
+                                            ""
+                                            }
+                                            {friend.status == "unknow" ? 
+                                            <>
                                         <ButtonDemand onClick={() => sendInvitation(friend)}>demand</ButtonDemand>
-                                    </div>
-                                </Text>
-                            </FriendSearch>
-                        );
-                    })
-                }
-            </ContainerList>
+                                            </>
+                                            :""
+                                            }
+                                        </div>
+                                    </Text>
+                                </FriendSearch>
+                            );
+                        })
+                    }
+                </ContainerList>
+            </LoadingWrapper>
         </Container>
     );
 };
+
+const ButtonCreateGroup = styled(Button)``;
 
 const Container = styled.div`
     display: flex;

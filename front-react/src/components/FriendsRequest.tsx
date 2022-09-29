@@ -1,41 +1,78 @@
 import Button from '@mui/material/Button';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { backgroundColor, backgroundColor2, borderColor, colorIcon } from '../style/variable';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import fetchData from '../services/fetch';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/Store';
+import { WebSocketContext } from '../services/websocket';
+import LoadingWrapper from './LoadingWrapper';
 
 const FriendsRequest = () => {
     const [friendsRequest,setFriendsRequest] = useState([]);
+    const session = useSelector((state: RootState) => state.session)
+    const chatSocket:any = useContext(WebSocketContext);
+    const [loading,setLoading] = useState(true)
+
+    function getFriendsRequest(){
+        setLoading(true)
+        fetchData.getRequestFriends().then((data:any) => {
+            setFriendsRequest(data);
+            setLoading(false)
+        });   
+    }
 
     useEffect(() => {
-        fetchData.getRequestFriends().then((data:any) => {
-            setFriendsRequest(data.map((request_user:any) => <div className='request-friends' key={request_user.id}>{request_user.username} <div><button>accepter</button> <button>refuser</button></div></div>))
-        });   
+        getFriendsRequest();
+        chatSocket.onmessage = function(e:any) {
+            const data = JSON.parse(e.data);
+            if(data.type == 'friend_request'){
+                console.log("recieve friends request");
+                getFriendsRequest();
+            }
+        }
     },[]);
+
+    const sendResponse = (user:any,accept:any) => {
+        console.log(`friend response from ${session.user.id} to ${user.id} is ${accept}`);
+        chatSocket.send(JSON.stringify({
+            'type': 'friend_response',
+            'user_from': session.user.id,
+            'user_to': user.id,
+            'accept': accept,
+        }));
+        console.log("msg envoyé");
+        getFriendsRequest();
+    }
+
     return (
         <Container>
-            <ContainerList>
-            {
-                    friendsRequest.map((friend:any) => {
-                        return(
-                            <FriendRequest>
-                                <ProfilImage/>
-                                <Text>
-                                    <div>
-
-                                    {friend.username}
-                                    </div>
-                                    <div>
-                                        <ButtonDemand >Accept</ButtonDemand>
-                                        <ButtonDemand >Decline</ButtonDemand>
-                                    </div>
-                                </Text>
-                            </FriendRequest>
-                        );
-                    })
+            <LoadingWrapper loading={loading}>
+                <ContainerList>
+                {
+                        friendsRequest.map((friend:any) => {
+                            return(
+                                <FriendRequest key={friend.id}>
+                                    <ProfilImage/>
+                                    <Text>
+                                        <div>
+                                        {friend.username}
+                                        </div>
+                                        <div>
+                                            <ButtonDemand onClick={() => sendResponse(friend,true)}>Accept</ButtonDemand>
+                                            <ButtonDemand onClick={() => sendResponse(friend,false)}>Decline</ButtonDemand>
+                                        </div>
+                                    </Text>
+                                </FriendRequest>
+                            );
+                        })
+                    }
+                {
+                    friendsRequest.length == 0 && <div>no invitation</div> && loading
                 }
-            </ContainerList>
+                </ContainerList>
+            </LoadingWrapper>
         </Container>
     );
 };

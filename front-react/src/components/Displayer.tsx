@@ -1,17 +1,17 @@
 import React, { FunctionComponent } from 'react';
 import styled from 'styled-components';
-import ConversationList from './ConversationList';
-import FriendsRequest from './FriendsRequest';
-import SearchFriends from './SearchFriends';
+import CreateGroup from './CreateGroup';
 
-const Displayer:any  = ({currentDisplaySide}:{currentDisplaySide:any}) => {
+const Displayer:any  = ({currentDisplaySide,ConversationList,SearchFriends,FriendsRequest,CreateGroup}:any) => {
     switch(currentDisplaySide){
         case 0 :
-            return (<ConversationList/>);
+            return (ConversationList);
         case 1 :
-            return (<SearchFriends/>);
+            return (SearchFriends);
         case 2 :
-            return (<FriendsRequest/>);
+            return (FriendsRequest);
+        case 3 :
+            return (CreateGroup);
     }
 
 }

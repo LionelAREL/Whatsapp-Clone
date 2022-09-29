@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import IconButton from '@mui/material/IconButton';
@@ -10,10 +10,79 @@ import AttachFileIcon from '@mui/icons-material/AttachFile';
 import MicIcon from '@mui/icons-material/Mic';
 import Message from './Message';
 import background from './../assets/email-pattern.webp'
+import fetchData from '../services/fetch';
+import { WebSocketContext } from '../services/websocket';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/Store';
 
-const Conversation = () => {
+const Conversation = ({selectedConversation}:any) => {
     const [messages,setMessages] = useState([]);
     //gestion des messages lus
+    const chatSocket = useContext(WebSocketContext)
+    const session = useSelector((state: RootState) => state.session)
+
+    function getMessage(){
+        if (selectedConversation != null){
+            if(selectedConversation.chat_type == "chat_private"){
+                fetchData.getMessagesPrivate(selectedConversation.id,1).then(data => {setMessages(data.results);console.log(data.results)})
+            }
+            else{
+                fetchData.getMessagesGroup(selectedConversation.id,1).then(data => {setMessages(data.results);console.log(data.results)})
+            }
+        }
+    }
+
+    async function sendMessage () {
+        const messageInputDom = document.querySelector('#send');
+        const message:any = (messageInputDom as any).value;
+        const user_from = session.user.id
+        console.log(session.user.id)
+        console.log(selectedConversation)
+        if(selectedConversation.chat_type == 'chat_private'){
+            let user_to:any = selectedConversation.users.id 
+            console.log(`message private from ${user_from} to user ${user_to} with message : ${message}`)
+            chatSocket.send(JSON.stringify({
+                'type': 'chat_message_private',
+                'user_from' : user_from,
+                'user_to' : user_to,
+                'message': message,
+            }));
+            (messageInputDom as any).value = '';
+            console.log("msg envoyé")
+        }
+        else{
+            let chat_group = selectedConversation.id
+            console.log(`message group from ${user_from} to chat ${chat_group} with message : ${message}`)
+            chatSocket.send(JSON.stringify({
+                'type': 'chat_message_group',
+                'user_from' : user_from,
+                'chat_group' : chat_group,
+                'message': message,
+            }));
+            (messageInputDom as any).value = '';
+            console.log("msg envoyé")
+        }
+        getMessage();
+    };
+
+
+
+    useEffect(() => {
+        getMessage();
+        
+    },[selectedConversation])
+
+    useEffect(() => {
+        chatSocket.onmessage = function(e:any) {
+            const data = JSON.parse(e.data);
+            if(data.type == 'chat_message_private' || data.type == 'chat_message_group'){
+                console.log("recieve message");
+                getMessage();
+            }
+        }
+    });
+
+
     return (
         <Container>
             <Header>
@@ -37,7 +106,7 @@ const Conversation = () => {
                 </RightHeader>
             </Header>
             <Chat>
-            {messages.map((message,index) => <Message key={index} message={message} />)}
+            {messages.map((message:any,key) => {return <Message key={key} message={message} />})}
             </Chat>
             <InputContainer>
                 <IconClick>
@@ -46,7 +115,7 @@ const Conversation = () => {
                 <IconClick>
                     <Clip/>
                 </IconClick>
-                    <Input/>
+                    <Input id='send' onKeyDown={(e) =>e.key === 'Enter' ? sendMessage() : ""}/>
                 <IconClick>
                     <Micro/>
                 </IconClick>
@@ -88,6 +157,7 @@ const Options = styled(MoreVertIcon)`
     color:${colorIcon};
 `;
 const Chat = styled.div`
+    padding: 20px;
     min-height: 90%;
     background:repeat url(${background})
 `

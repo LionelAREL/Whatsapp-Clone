@@ -8,7 +8,7 @@ from core import views
 router = routers.SimpleRouter()
 
 router.register('publications', views.PublicationViewset)
-router.register('users', views.UserViewset)
+router.register('users', views.UserViewset,basename="user")
 router.register('chat_private',views.ChatPrivateViewset,basename="chat_private")
 router.register('chat_group',views.ChatGroupViewset,basename="chat_group")
 

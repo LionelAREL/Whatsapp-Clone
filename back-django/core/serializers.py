@@ -58,9 +58,20 @@ class UserDetailSerializer(serializers.ModelSerializer):
     
 
 class UserListSerializer(serializers.ModelSerializer):
+    status = serializers.SerializerMethodField()
     class Meta:
         model = get_user_model()
-        fields = ['id','username', 'first_name', 'last_name']
+        fields = ['id','username', 'first_name', 'last_name','status']
+    def get_status(self,instance):
+        print(self.context['request'].user.friends)
+        if self.context['request'].user.id == instance.id:
+            return "self"
+        elif self.context['request'].user.friends.friends.filter(id=instance.id).exists():
+            return "friend"
+        elif instance.friends.request_friends.filter(id=self.context['request'].user.id).exists():
+            return "request_send"
+        else :
+            return "unknow"
 
 class ChatListSerializer(serializers.ModelSerializer):
     users = serializers.SerializerMethodField()

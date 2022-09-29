@@ -1,18 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import fetchData from '../services/fetch';
 import { backgroundColor, borderColor, colorIcon } from '../style/variable';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LoadingWrapper from './LoadingWrapper';
+import { WebSocketContext } from '../services/websocket';
 
 
-const ConversationList = () => {
+const ConversationList = ({setSelectedConversation}:any) => {
     const [chats,setChats] = useState([]);
+    const [loading,setLoading] = useState(true)
+    const chatSocket:any = useContext(WebSocketContext);
+
 
     useEffect(() => {
         getChats();
+        chatSocket.onmessage = function(e:any) {
+            const data = JSON.parse(e.data);
+            if(data.type == 'chat_message_private' || data.type == 'chat_message_group'){
+                console.log("recieve message");
+                getChats();
+                //notification 
+            }
+        }
     },[]);
 
     const getChats = () => {
+        setLoading(true)
         fetchData.getChatsPrivate().then((data1) => {
             fetchData.getChatsGroup().then((data) => {
                 let temp = data1.concat(data);
@@ -22,23 +36,26 @@ const ConversationList = () => {
                 setChats(temp);
             });
         });
+        setLoading(false)
     }
     return (
         <Container>
-            {chats.map((conversation:any,key) => {
-                return (
-                <Conversation key={conversation.id} onClick={(e) => {e.preventDefault();console.log(conversation,"chat selected")}} >
-                    <ProfilImage/>
-                    <Text>
-                        {conversation.chat_type == 'chat_group'  ? conversation.chat_name : conversation.users.username}
-                    </Text>
-                    {/* <Badge>
-                    </Badge> */}
-                </Conversation>);
-            
-            
-            
-            })}
+            <LoadingWrapper loading={loading}>
+                {chats.map((conversation:any,key) => {
+                    return (
+                    <Conversation key={conversation.id} onClick={(e) => {e.preventDefault();setSelectedConversation(conversation);console.log("chat selected : ",conversation)}} >
+                        <ProfilImage/>
+                        <Text>
+                            {conversation.chat_type == 'chat_group'  ? conversation.chat_name : conversation.users.username}
+                        </Text>
+                        {/* <Badge>
+                        </Badge> */}
+                    </Conversation>);
+                
+                
+                
+                })}
+            </LoadingWrapper>
         </Container>
     );
 };

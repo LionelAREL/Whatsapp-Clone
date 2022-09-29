@@ -4,7 +4,7 @@ import fetchData from '../services/fetch'
 import AuthService from '../services/authentification'
 
 export interface Session {
-  user: {pseudo?:string,id?:string}|null,
+  user: any,
   loading:boolean
 }
 

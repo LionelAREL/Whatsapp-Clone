@@ -114,6 +114,16 @@ class ChatPrivateConsumer(AsyncWebsocketConsumer):
             user_to = await getUserById(user_to)     
             print('add friend request to list')
             await addToRequestList(user_from,user_to)
+            
+            await self.channel_layer.group_send(
+                    'chat_private_%s' % str(user_to.id),
+                    {
+                        'type': type_message,
+                        'user_from' : user_from.id,
+                        'user_to' : user_to.id,
+                    }
+                )
+
 
         elif(type_message == "friend_response"):
             user_to = text_data_json['user_to']
@@ -236,5 +246,18 @@ class ChatPrivateConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'user_from' : user_from,
             'chat_group' : chat_group,
+            'type':type_message,
+        }))
+
+    # Receive message from room group
+    async def friend_request(self, event):
+        user_from = event['user_from']
+        user_to = event['user_to']
+        type_message = event['type']
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'user_to' : user_to,
+            'user_from' : user_from,
             'type':type_message,
         }))

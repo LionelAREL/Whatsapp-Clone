@@ -5,7 +5,7 @@ import { RootState } from '../../redux/Store';
 import Cookies from 'universal-cookie';
 import AuthService from '../../services/authentification';
 import {loading, setSession} from './../../redux/CounterSlice'
-import { WebsocketProvider } from '../../services/websocket';
+import { WebSocketProvider } from '../../services/websocket';
 
 const ProtectedRoute = () => {
     const session = useSelector((state: RootState) => state.session)
@@ -15,9 +15,9 @@ const ProtectedRoute = () => {
         //connected
         return (
             <div>
-                <WebsocketProvider>
+                <WebSocketProvider>
                     <Outlet/>
-                </WebsocketProvider>
+                </WebSocketProvider>
             </div>
         );
     }
@@ -26,7 +26,8 @@ const ProtectedRoute = () => {
         if(session.loading==false){
             // initialize loading 
             dispatch(loading())
-            AuthService.getSession().then(session => {dispatch(setSession(session))})
+            AuthService.getSession().then(session => {dispatch(setSession(session.user))})
+            console.log(session)
         }
         return (
         <div>

@@ -191,6 +191,7 @@ const getSearchUsers= (username:string) =>{
         "Content-Type": "application/json",
         "X-CSRFToken": cookies.get("csrftoken"),
         },
+        credentials: "include",
     })
     .then(isResponseOk)
     .then((data) => {
