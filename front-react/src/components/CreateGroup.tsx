@@ -4,11 +4,10 @@ import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { Form } from 'react-router-dom';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { RootState } from '../redux/Store';
 import fetchData from '../services/fetch';
 import { WebSocketContext } from '../services/websocket';
-import { backgroundColor, colorIcon } from '../style/variable';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -28,6 +27,9 @@ const CreateGroup = ({setCurrentdispalySide}:any) => {
 
     const [selectFriendsGroup, setSelectFriendsGroup] = React.useState<any[]>([]);
     const [alreadySubmit, setAlreadySubmit] = React.useState(false);
+
+    const theme:any = useTheme();
+
 
     React.useEffect(() =>{
         fetchData.getFriends().then((data) => setFriends(data));
@@ -76,8 +78,8 @@ const CreateGroup = ({setCurrentdispalySide}:any) => {
         <Container>
             <Return onClick={() => {setCurrentdispalySide(1)}}>return</Return>
             <Forms onSubmit={handleSubmit(submit)}>
-                <InputGroupName error={errors.groupName && true} label="group name" variant="outlined" {...register("groupName",{required:true})} helperText={errors.groupName && "name group required"} />
-                    <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: '${backgroundColor}' }}>
+                <InputGroupName sx={{"& .MuiInputBase-root": {color: theme.fontColor},"& .MuiFormLabel-root": {color: theme.fontColor},"& .MuiOutlinedInput-notchedOutline": {borderColor: theme.fontColor} }} error={errors.groupName && true} label="group name" variant="outlined" {...register("groupName",{required:true})} helperText={errors.groupName && "name group required"} />
+                    <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: '${(props) => props.theme.backgroundColor}',color:theme.fontColor,"& .MuiButtonBase-root": {color: theme.fontColor}, }}>
                     {friends.map((friend:any) => {
                         const labelId = `checkbox-list-secondary-label-${friend}`;
                         return (
@@ -114,20 +116,21 @@ const CreateGroup = ({setCurrentdispalySide}:any) => {
 const Container = styled.div`
     display: flex;
     flex-direction: column;
-    background-color: ${backgroundColor};
+    background-color: ${(props) => props.theme.backgroundColor};
     height: 100%;
-    border-right: 1px solid #303d45;
+    border-right: 1px solid ${(props) => props.theme.borderColor2};
 `;
 
 const InputGroupName = styled(TextField)`
     width:95%;
     margin: 0 auto;
+    /* color:${(props) => props.theme.fontColor} !important; */
 `
 
 const ProfilImage = styled(AccountCircleIcon)`
     width: 55px !important;
     height: 55px !important;
-    color: ${colorIcon};
+    color: ${(props) => props.theme.colorIcon};
 `;
 
 const Return = styled(Button)`

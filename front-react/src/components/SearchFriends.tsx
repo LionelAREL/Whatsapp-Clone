@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { RootState } from '../redux/Store';
 import fetchData from '../services/fetch';
 import { WebSocketContext } from '../services/websocket';
-import { backgroundColor, backgroundColor2, borderColor, colorIcon } from '../style/variable';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Button from '@mui/material/Button';
 import LoadingWrapper from './LoadingWrapper';
@@ -102,21 +101,22 @@ const ButtonCreateGroup = styled(Button)`
 const Container = styled.div`
     display: flex;
     flex-direction: column;
-    background-color: ${backgroundColor};
+    background-color: ${(props) => props.theme.backgroundColor};
     height: 100%;
-    border-right: 1px solid #303d45;
+    border-right: 1px solid ${(props) => props.theme.borderColor2};
 `;
 
 const Input = styled.input`
     width:80%;
     margin: 20px auto;
-    background-color: ${backgroundColor2};
+    background-color: ${(props) => props.theme.backgroundColor2};
     border: none;
     height: 30px;
     border-radius: 5px;
     text-indent: 15px; 
     font-size: 17px;
     outline:none;
+    color:${(props) => props.theme.colorIcon};
 `;
 
 const ContainerList = styled.div`
@@ -139,16 +139,16 @@ const Text = styled.div`
     margin-left: 10px;
     display: flex;
     align-items: center;
-    color: ${colorIcon};
+    color: ${(props) => props.theme.colorIcon};
     justify-content: space-between;
-    border-top: 1px solid ${borderColor};
-    border-bottom: 1px solid ${borderColor};
+    border-top: 1px solid ${(props) => props.theme.borderColor};
+    border-bottom: 1px solid ${(props) => props.theme.borderColor};
 `;
 
 const ProfilImage = styled(AccountCircleIcon)`
     width: 55px !important;
     height: 55px !important;
-    color: ${colorIcon};
+    color: ${(props) => props.theme.colorIcon};
 `;
 const ButtonDemand = styled(Button)``;
 

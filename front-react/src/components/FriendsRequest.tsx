@@ -1,7 +1,7 @@
 import Button from '@mui/material/Button';
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { backgroundColor, backgroundColor2, borderColor, colorIcon } from '../style/variable';
+
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import fetchData from '../services/fetch';
 import { useSelector } from 'react-redux';
@@ -84,15 +84,15 @@ const FriendsRequest = () => {
 const Container = styled.div`
     display: flex;
     flex-direction: column;
-    background-color: ${backgroundColor};
+    background-color: ${(props) => props.theme.backgroundColor};
     height: 100%;
-    border-right: 1px solid #303d45;
+    border-right: 1px solid ${(props) => props.theme.borderColor2};
 `;
 
 const Input = styled.input`
     width:80%;
     margin: 20px auto;
-    background-color: ${backgroundColor};
+    background-color: ${(props) => props.theme.backgroundColor};
     border: none;
     height: 22px;
     border-radius: 5px;
@@ -118,16 +118,16 @@ const Text = styled.div`
     margin-left: 10px;
     display: flex;
     align-items: center;
-    color: ${colorIcon};
+    color: ${(props) => props.theme.colorIcon};
     justify-content: space-between;
-    border-top: 1px solid ${borderColor};
-    border-bottom: 1px solid ${borderColor};
+    border-top: 1px solid ${(props) => props.theme.borderColor};
+    border-bottom: 1px solid ${(props) => props.theme.borderColor};
 `;
 
 const ProfilImage = styled(AccountCircleIcon)`
     width: 55px !important;
     height: 55px !important;
-    color: ${colorIcon};
+    color: ${(props) => props.theme.colorIcon};
 `;
 const ButtonDemand = styled(Button)``;
 
@@ -135,6 +135,7 @@ const NoInvitationText = styled.div`
     text-align: center;
     margin-top: 20px;
     font-size: 20px;
+    color:${(props) => props.theme.fontColor};
 `;
 
 

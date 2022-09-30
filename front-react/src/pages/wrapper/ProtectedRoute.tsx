@@ -7,6 +7,7 @@ import AuthService from '../../services/authentification';
 import {loading, setSession} from './../../redux/CounterSlice'
 import { WebSocketProvider } from '../../services/websocket';
 import { CircularProgress } from '@mui/material';
+import App from './App';
 
 const ProtectedRoute = () => {
     const session = useSelector((state: RootState) => state.session)
@@ -17,7 +18,9 @@ const ProtectedRoute = () => {
         return (
             <div>
                 <WebSocketProvider>
+                    <App>
                     <Outlet/>
+                    </App>
                 </WebSocketProvider>
             </div>
         );

@@ -13,6 +13,8 @@ import {store} from './redux/Store';
 import ProtectedRoute from "./pages/wrapper/ProtectedRoute";
 import SignUp from "./pages/SignUp";
 import Chat from "./pages/Chat";
+import { ThemeProvider } from "styled-components";
+import App from "./pages/wrapper/App";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +34,10 @@ const router = createBrowserRouter([
     errorElement: <Error404 />,
     children: [
       {
+        path: "",
+        element: <Login/>,
+      },
+      {
         path: "/login",
         element: <Login/>,
       },
@@ -50,7 +56,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <RouterProvider router={router} />
+          <RouterProvider router={router} />
     </Provider>
   </React.StrictMode>
 );

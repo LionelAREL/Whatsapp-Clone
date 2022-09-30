@@ -3,10 +3,9 @@ import ChatIcon from '@mui/icons-material/Chat';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import IconButton from '@mui/material/IconButton';
-import { backgroundColor, borderColor, colorIcon, dotColorNotification, profilHeaderSize } from '../style/variable';
 import { WebSocketContext } from '../services/websocket';
 import { Badge, Menu, MenuItem, MenuProps, Modal } from '@mui/material';
 import Radio from '@mui/material/Radio';
@@ -14,8 +13,13 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import { useDispatch } from 'react-redux';
+import { logoutSession, setDark } from '../redux/CounterSlice';
+import fetchData from '../services/fetch';
+import AuthService from '../services/authentification';
 
 const NavBar:any = ({setCurrentdispalySide,currentDisplaySide,noWatchedMessage}:any) => {
+    const dispatch = useDispatch();
     const chatSocket = useContext(WebSocketContext)
     const [pin,setPin] = useState(true);
 
@@ -29,13 +33,23 @@ const NavBar:any = ({setCurrentdispalySide,currentDisplaySide,noWatchedMessage}:
     };
     
     const [openModal, setOpenModal] = React.useState(false);
-    const handleOpenModal = () => setOpenModal(true);
-    const handleCloseModal = () => setOpenModal(false);
+    const handleOpenModal = () => {setOpenModal(true)}
+    const handleCloseModal = () => {setOpenModal(false)}
 
     const [value, setValue] = React.useState(true);
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setValue((event.target as any).value);
-    }
+      dispatch(setDark((event.target as any).value == 'true' ? true : false))
+        }
+
+    const theme:any = useTheme();
+
+    
+    const logout = () => {
+        AuthService.logout().then(() => dispatch(logoutSession()))
+    };
+
+
 
     useEffect(() => {
         function refreshOnMessageReceive(e:any) {
@@ -76,11 +90,11 @@ const NavBar:any = ({setCurrentdispalySide,currentDisplaySide,noWatchedMessage}:
                 <ProfilImage/>
             </IconButton>
             <IconContainer>
-                <Badge invisible={noWatchedMessage} sx={{ "& .MuiBadge-badge": {backgroundColor: `${dotColorNotification}`}}} overlap="circular" badgeContent=" " variant="dot">
+                <Badge invisible={noWatchedMessage} sx={{ "& .MuiBadge-badge": {backgroundColor: theme.dotColorNotification}}} overlap="circular" badgeContent=" " variant="dot">
                     <IconClick onClick={(e) => changeDisplay(e,0)}><ChatIconMessage/></IconClick>
                 </Badge>
                 <IconClick onClick={(e) => changeDisplay(e,1)}><PersonAdd/></IconClick>
-                <Badge invisible={pin} sx={{ "& .MuiBadge-badge": {backgroundColor: `${dotColorNotification}`}}} overlap="circular" badgeContent=" " variant="dot">
+                <Badge invisible={pin} sx={{ "& .MuiBadge-badge": {backgroundColor: theme.dotColorNotification}}} overlap="circular" badgeContent=" " variant="dot">
                     <IconClick onClick={(e) => changeDisplay(e,2)}><ListBullet/></IconClick>
                 </Badge>
                 <>
@@ -92,6 +106,7 @@ const NavBar:any = ({setCurrentdispalySide,currentDisplaySide,noWatchedMessage}:
                         }}
                         anchorEl={anchorEl}
                         open={open}
+                        sx={{bgColor:'${(props) => props.theme.backgroundColor}',color:'${(props) => props.theme.backgroundColor}'}}
                         onClose={handleClose}
                     >
                         
@@ -121,7 +136,7 @@ const NavBar:any = ({setCurrentdispalySide,currentDisplaySide,noWatchedMessage}:
                                 </div>
                             </ModalContainer>
                         </Modal>
-                        <MenuItem onClick={handleClose} disableRipple>
+                        <MenuItem onClick={logout} disableRipple>
                         Logout
                         </MenuItem>
                     </StyledMenu>
@@ -133,9 +148,9 @@ const NavBar:any = ({setCurrentdispalySide,currentDisplaySide,noWatchedMessage}:
 
 
 const ProfilImage = styled(AccountCircleIcon)`
-    width: ${profilHeaderSize} !important;
-    height:${profilHeaderSize} !important;
-    color:${colorIcon};
+    width: ${(props) => props.theme.profilHeaderSize} !important;
+    height:${(props) => props.theme.profilHeaderSize} !important;
+    color:${(props) => props.theme.colorProfilDefault};
 `
 const IconContainer = styled.div``
 
@@ -145,26 +160,26 @@ const IconClick = styled(IconButton)`
 
 const Container = styled.div`
     width: 30vw !important;
-    background-color:${backgroundColor};
+    background-color:${(props) => props.theme.backgroundColor};
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    border-bottom:1px solid ${borderColor};
+    border-bottom:1px solid ${(props) => props.theme.borderColor};
     height:55px;
 
 `
 const ChatIconMessage = styled(ChatIcon)`
-    color:${colorIcon};
+    color:${(props) => props.theme.colorIcon};
 `;
 const PersonAdd = styled(PersonAddAlt1Icon)`
-    color:${colorIcon};
+    color:${(props) => props.theme.colorIcon};
 `;
 const ListBullet = styled(FormatListBulletedIcon)`
-    color:${colorIcon};
+    color:${(props) => props.theme.colorIcon};
 `;
 const Options = styled(MoreVertIcon)`
-    color:${colorIcon};
+    color:${(props) => props.theme.colorIcon};
 `;
 
 const StyledMenu = styled((props: MenuProps) => (
@@ -181,6 +196,9 @@ const StyledMenu = styled((props: MenuProps) => (
       {...props}
     />
   ))(({ theme }) => ({
+    '& .MuiPaper-root': {
+        backgroundColor: theme.optionColor
+    }
   }));
 
 const ModalContainer = styled.div`

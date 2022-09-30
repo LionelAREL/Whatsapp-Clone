@@ -4,12 +4,12 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import IconButton from '@mui/material/IconButton';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import SearchIcon from '@mui/icons-material/Search';
-import { backgroundColor, colorIcon, profilHeaderSize } from '../style/variable';
 import TagFacesIcon from '@mui/icons-material/TagFaces';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import MicIcon from '@mui/icons-material/Mic';
 import Message from './Message';
-import background from './../assets/email-pattern.webp'
+import backgroundDark from './../assets/email-pattern.webp'
+import backgroundLight from './../assets/fruits-pattern.webp'
 import fetchData from '../services/fetch';
 import { WebSocketContext } from '../services/websocket';
 import { useSelector } from 'react-redux';
@@ -19,7 +19,7 @@ const Conversation = ({selectedConversation}:any) => {
     const [messages,setMessages] = useState([]);
     const chatSocket = useContext(WebSocketContext)
     const session = useSelector((state: RootState) => state.session)
-
+    
     function scrollToBottom(){
         let scroll_to_bottom:any = document.getElementById('scroll');
 		scroll_to_bottom.scrollTop = scroll_to_bottom.scrollHeight;
@@ -28,14 +28,14 @@ const Conversation = ({selectedConversation}:any) => {
     function getMessage(){
         if (selectedConversation != null){
             if(selectedConversation.chat_type == "chat_private"){
-                fetchData.getMessagesPrivate(selectedConversation.id,1).then(data => {setMessages(data.results);scrollToBottom()})
+                fetchData.getMessagesPrivate(selectedConversation.id,1).then(data => {setMessages(data.results);})
             }
             else{
-                fetchData.getMessagesGroup(selectedConversation.id,1).then(data => {setMessages(data.results);scrollToBottom()})
+                fetchData.getMessagesGroup(selectedConversation.id,1).then(data => {setMessages(data.results);})
             }
         }
     }
-
+    
     function sendMessage () {
         const messageInputDom = document.querySelector('#send');
         const message:any = (messageInputDom as any).value;
@@ -66,14 +66,14 @@ const Conversation = ({selectedConversation}:any) => {
         }
         getMessage();
     };
+    
 
-
-
+    
     useEffect(() => {
         getMessage();
-        
+        scrollToBottom();
     },[selectedConversation])
-
+    
     useEffect(() => {
         function refreshConvListOnMessageReceive(e:any) {
             const data = JSON.parse(e.data);
@@ -83,11 +83,14 @@ const Conversation = ({selectedConversation}:any) => {
             }
         }
         chatSocket.addEventListener("message",refreshConvListOnMessageReceive)
-
+        
         return () => chatSocket.removeEventListener("message",refreshConvListOnMessageReceive)
     },[]);
-
-
+    
+    useEffect(() => {
+        scrollToBottom();
+    },[messages]);
+    
     return (
         <Container>
             <Header>
@@ -110,7 +113,7 @@ const Conversation = ({selectedConversation}:any) => {
                     </IconClick>
                 </RightHeader>
             </Header>
-            <Chat id='scroll'>
+            <Chat id='scroll' style={{background:`repeat url(${session.isDark ? backgroundDark : backgroundLight}`}}>
             {messages.map((message:any,key) => {return <Message key={key} message={message} />})}
             </Chat>
             <InputContainer>
@@ -133,48 +136,40 @@ const iconInputMessageSize = "80px";
 const Container = styled.div`
     width:70vw;
     height:100vh
-`;
-const Header = styled.div`
+    `;
+    const Header = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    background-color: ${backgroundColor};
-    border-left: 1px #303d45 solid;
+    background-color: ${(props) => props.theme.backgroundColor};
+    border-left: 1px ${(props) => props.theme.borderColor2} solid;
     height:55px;
-`;
+    `;
 const Name = styled.div`
-    color:${colorIcon};
+color:${(props) => props.theme.fontColor};
 `;
 const LeftHeader = styled.div``
 const RightHeader = styled.div``
 const ProfilImage = styled(AccountCircleIcon)`
-    color:${colorIcon};
-    width: ${profilHeaderSize} !important;
-    height:${profilHeaderSize} !important;
+color:${(props) => props.theme.colorProfilDefault};
+width: ${(props) => props.theme.profilHeaderSize} !important;
+height:${(props) => props.theme.profilHeaderSize} !important;
+background-size:1000px !important;
+border-radius: 50px;
+background-image: #ffffff;
 `;
 const IconClick = styled(IconButton)`
-    margin:0 4px !important;
+margin:0 4px !important;
 `;
 const Search = styled(SearchIcon)`
-    color:${colorIcon};
-`;
+    color:${(props) => props.theme.colorIcon};
+    `;
 const Options = styled(MoreVertIcon)`
-    color:${colorIcon};
+color:${(props) => props.theme.colorIcon};
 `;
-const Chat = styled.div`
-    height: calc(100% - 125px);
-    background:repeat url(${background});
-    overflow: scroll;
-    -ms-overflow-style: none; /* for Internet Explorer, Edge */
-    scrollbar-width: none; /* for Firefox */
-    overflow-y: scroll;
-    ::-webkit-scrollbar {
-    display: none; /* for Chrome, Safari, and Opera */
-    }
-`
 const InputContainer = styled.div`
-    background-color:${backgroundColor};
+    background-color:${(props) => props.theme.backgroundColor};
     height:70px;
     width:70vw;
     position:absolute;
@@ -185,26 +180,36 @@ const InputContainer = styled.div`
     align-items: center;
 `;
 const Micro = styled(MicIcon)`
-    width: ${iconInputMessageSize};
-    color:${colorIcon};
+    width: ${(props) => props.theme.iconInputMessageSize};
+    color:${(props) => props.theme.colorIcon};
 `;
 const Smiley = styled(TagFacesIcon)`
-    width: ${iconInputMessageSize};
-    color:${colorIcon};
+    width: ${(props) => props.theme.iconInputMessageSize};
+    color:${(props) => props.theme.colorIcon};
 `;
 const Clip = styled(AttachFileIcon)`
-    width: ${iconInputMessageSize};
-    color:${colorIcon};
+    width: ${(props) => props.theme.iconInputMessageSize};
+    color:${(props) => props.theme.colorIcon};
 `;
 const Input = styled.input`
-    color:${colorIcon};
+    color:${(props) => props.theme.colorIcon};
     width:85%;
     height:30px;
     border-radius:5px;
-    background-color: #2a3942;
     border:none;
     text-decoration: none !important;
     text-indent: 10px; 
     outline:none;
+    background-color: ${(props) => props.theme.inputColor};
 `;
+const Chat = styled.div`
+    height: calc(100% - 125px);
+    overflow: scroll;
+    -ms-overflow-style: none; /* for Internet Explorer, Edge */
+        scrollbar-width: none; /* for Firefox */
+        overflow-y: scroll;
+        ::-webkit-scrollbar {
+        display: none; /* for Chrome, Safari, and Opera */
+        }
+    `
 export default Conversation;

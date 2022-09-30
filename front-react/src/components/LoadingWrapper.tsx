@@ -1,7 +1,6 @@
 import CircularProgress from '@mui/material/CircularProgress';
 import React from 'react';
 import styled from 'styled-components';
-import { colorMessageOutgoing } from '../style/variable';
 
 const LoadingWrapper = (props:any) => {
     if (!props.loading){
@@ -13,7 +12,7 @@ const LoadingWrapper = (props:any) => {
     }
     else{
         return(<Container>
-            <LoadingLogo style={{'color': `${colorMessageOutgoing}` }} />
+            <LoadingLogo style={{'color': `${(props:any) => props.theme.colorMessageOutgoing}` }} />
         </Container>)
     }
 };

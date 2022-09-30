@@ -1,13 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import fetchData from '../services/fetch';
-import { backgroundColor, borderColor, colorIcon } from '../style/variable';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LoadingWrapper from './LoadingWrapper';
 import { WebSocketContext } from '../services/websocket';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/Store';
-import { checkPinMessageNavbar } from '../utils/utils';
+import { checkPinMessageNavbar, isSelectedChat } from '../utils/utils';
 
 
 const ConversationList = ({setSelectedConversation,setNoWatchedMessage,selectedConversation,currentDisplaySide}:any) => {
@@ -15,7 +14,7 @@ const ConversationList = ({setSelectedConversation,setNoWatchedMessage,selectedC
     const [loading,setLoading] = useState(true)
     const chatSocket:any = useContext(WebSocketContext);
     const session = useSelector((state: RootState) => state.session)
-
+    const theme:any = useTheme();
     useEffect(() => {
         getChats();
         function refreshOnMessage(e:any) {
@@ -58,7 +57,6 @@ const ConversationList = ({setSelectedConversation,setNoWatchedMessage,selectedC
                         return (new Date(b.last_update).getTime() - new Date(a.last_update).getTime());
                     });
                     setChats(temp);
-                    console.log(checkPinMessageNavbar(temp))
                     setNoWatchedMessage(checkPinMessageNavbar(temp));
                 });
             });
@@ -100,7 +98,7 @@ const ConversationList = ({setSelectedConversation,setNoWatchedMessage,selectedC
             <LoadingWrapper loading={loading}>
                 {chats.map((conversation:any,key) => {
                     return (
-                    <Conversation key={conversation.id} onClick={(e) => {clickConversation(e,conversation);setSelectedConversation(conversation);}} >
+                    <Conversation style={{background:isSelectedChat(conversation,selectedConversation) ? theme.colorConvSelected : theme.backgroundColor2 }} key={conversation.id} onClick={(e) => {clickConversation(e,conversation);setSelectedConversation(conversation);}} >
                         <ProfilImage/>
                         <Text>
                             {conversation.chat_type == 'chat_group'  ? conversation.chat_name : conversation.users.username}
@@ -120,10 +118,10 @@ const ConversationList = ({setSelectedConversation,setNoWatchedMessage,selectedC
 const Container = styled.div`
     display: flex;
     flex-direction: column;
-    background-color: ${backgroundColor};
+    background-color: ${(props) => props.theme.backgroundColor};
     height: 100%;
     overflow: scroll;
-    border-right: 1px solid ${borderColor};
+    border-right: 1px solid ${(props) => props.theme.borderColor};
     -ms-overflow-style: none; /* for Internet Explorer, Edge */
     scrollbar-width: none; /* for Firefox */
     overflow-y: scroll;
@@ -132,7 +130,6 @@ const Container = styled.div`
 }
 `;
 const Conversation = styled.div`
-    background-color: #111b21;
     height: 70px;
     display: flex;
     flex-direction: row;
@@ -141,7 +138,7 @@ const Conversation = styled.div`
 const ProfilImage = styled(AccountCircleIcon)`
     width: 55px !important;
     height: 55px !important;
-    color: ${colorIcon};
+    color: ${(props) => props.theme.colorProfilDefault};
 `;
 
 const Text = styled.div`
@@ -150,13 +147,13 @@ const Text = styled.div`
     margin-left: 10px;
     display: flex;
     align-items: center;
-    color: ${colorIcon};
-    border-top: 1px solid ${borderColor};
-    border-bottom: 1px solid ${borderColor};
+    color: ${(props) => props.theme.colorIcon};
+    border-top: 1px solid ${(props) => props.theme.borderColor};
+    border-bottom: 1px solid ${(props) => props.theme.borderColor};
 `;
 
 const Badge = styled.div`
-    background-color: green;
+    background-color: ${(props) => props.theme.dotColorNotification};
     position:relative;
     border-radius: 50%;
     height: 15px;

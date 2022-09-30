@@ -76,21 +76,20 @@ const signUp = (username:string,password:string) => {
 };
 
 const logout = () => {
-  fetch(ACCOUNT_URL + "logout/", {
+  return fetch(ACCOUNT_URL + "logout/", {
       credentials: "include",
   })
   .then(isResponseOk)
   .then((data) => {
-  }).then(() =>{
-    document.location.assign('/login');}
-  )
+    return data
+  })
   .catch((err) => {
-      return 
+      return err;
   });
 };
 
 
-const AuthService = {
+const   AuthService = {
   login,
   logout,
   ACCOUNT_URL,
