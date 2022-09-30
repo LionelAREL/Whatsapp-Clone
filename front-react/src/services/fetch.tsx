@@ -8,7 +8,7 @@ const cookies = new Cookies();
 
 const isResponseOk = (response:any) =>  {
     if (response.status >= 200 && response.status <= 299) {
-        console.log(response);
+        // console.log(response);
         return response.json();
     } else {
         throw Error(response.statusText);
@@ -25,7 +25,6 @@ const getPublications = () => {
     })
     .then(isResponseOk)
     .then((data) => {
-        console.log(data);
         return data;
     });
 };
@@ -39,7 +38,6 @@ const getPublication = (publicationId:any) => {
     })
     .then(isResponseOk)
     .then((data) => {
-        console.log(data);
         return data;
     });
 };
@@ -55,7 +53,6 @@ const getMessagesGroup = (chat_group_id:number,page_number:number) =>{
     })
     .then(isResponseOk)
     .then((data) => {
-        console.log(data);
         return data;
     });
 };
@@ -70,7 +67,6 @@ const getPrivateChatRetrive = (user1_id:any,user2_id:number) =>{
     })
     .then(isResponseOk)
     .then((data) => {
-        console.log(data);
         return data;
     });
 };
@@ -86,7 +82,6 @@ const getMessagesPrivate = (chat_private_id:number,page_number:number) =>{
     })
     .then(isResponseOk)
     .then((data) => {
-        console.log(data);
         return data;
     });
 };
@@ -102,7 +97,6 @@ const getChatGroup = (chat_group_id:number) =>{
     })
     .then(isResponseOk)
     .then((data) => {
-        console.log(data);
         return data;
     });
 };
@@ -117,7 +111,6 @@ const getChatsGroup = () =>{
     })
     .then(isResponseOk)
     .then((data) => {
-        console.log(data);
         return data;
     });
 };
@@ -132,7 +125,6 @@ const getChatsPrivate = () =>{
     })
     .then(isResponseOk)
     .then((data) => {
-        console.log(data);
         return data;
     });
 };
@@ -148,7 +140,6 @@ const getChatPrivate = (chat_private_id:number) =>{
     })
     .then(isResponseOk)
     .then((data) => {
-        console.log(data);
         return data;
     });
 };
@@ -164,7 +155,6 @@ const getFriends= () =>{
     })
     .then(isResponseOk)
     .then((data) => {
-        console.log(data);
         return data;
     });
 };
@@ -180,7 +170,6 @@ const getRequestFriends= () =>{
     })
     .then(isResponseOk)
     .then((data) => {
-        console.log(data);
         return data;
     });
 };
@@ -195,7 +184,6 @@ const getSearchUsers= (username:string) =>{
     })
     .then(isResponseOk)
     .then((data) => {
-        console.log(data);
         return data;
     });
 };
@@ -210,7 +198,6 @@ const postPublication= (title:string,text:string,authors:any) =>{
     })
     .then(isResponseOk)
     .then((data) => {
-        console.log(data);
         return data;
     });
 };
@@ -225,7 +212,6 @@ const putPublication= (id:any,title:string,text:string,authors:any) =>{
     })
     .then(isResponseOk)
     .then((data) => {
-        console.log(data);
         return data;
     });
 };
@@ -243,7 +229,6 @@ const postChatGroup= (name_group:string,users:any) =>{
     })
     .then(isResponseOk)
     .then((data) => {
-        console.log(data);
         return data;
     });
 };

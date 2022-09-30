@@ -17,27 +17,29 @@ import { RootState } from '../redux/Store';
 
 const Conversation = ({selectedConversation}:any) => {
     const [messages,setMessages] = useState([]);
-    //gestion des messages lus
     const chatSocket = useContext(WebSocketContext)
     const session = useSelector((state: RootState) => state.session)
+
+    function scrollToBottom(){
+        let scroll_to_bottom:any = document.getElementById('scroll');
+		scroll_to_bottom.scrollTop = scroll_to_bottom.scrollHeight;
+    }
 
     function getMessage(){
         if (selectedConversation != null){
             if(selectedConversation.chat_type == "chat_private"){
-                fetchData.getMessagesPrivate(selectedConversation.id,1).then(data => {setMessages(data.results);console.log(data.results)})
+                fetchData.getMessagesPrivate(selectedConversation.id,1).then(data => {setMessages(data.results);scrollToBottom()})
             }
             else{
-                fetchData.getMessagesGroup(selectedConversation.id,1).then(data => {setMessages(data.results);console.log(data.results)})
+                fetchData.getMessagesGroup(selectedConversation.id,1).then(data => {setMessages(data.results);scrollToBottom()})
             }
         }
     }
 
-    async function sendMessage () {
+    function sendMessage () {
         const messageInputDom = document.querySelector('#send');
         const message:any = (messageInputDom as any).value;
         const user_from = session.user.id
-        console.log(session.user.id)
-        console.log(selectedConversation)
         if(selectedConversation.chat_type == 'chat_private'){
             let user_to:any = selectedConversation.users.id 
             console.log(`message private from ${user_from} to user ${user_to} with message : ${message}`)
@@ -73,14 +75,17 @@ const Conversation = ({selectedConversation}:any) => {
     },[selectedConversation])
 
     useEffect(() => {
-        chatSocket.onmessage = function(e:any) {
+        function refreshConvListOnMessageReceive(e:any) {
             const data = JSON.parse(e.data);
             if(data.type == 'chat_message_private' || data.type == 'chat_message_group'){
                 console.log("recieve message");
                 getMessage();
             }
         }
-    });
+        chatSocket.addEventListener("message",refreshConvListOnMessageReceive)
+
+        return () => chatSocket.removeEventListener("message",refreshConvListOnMessageReceive)
+    },[]);
 
 
     return (
@@ -92,7 +97,7 @@ const Conversation = ({selectedConversation}:any) => {
                     </IconClick>
                     <IconClick>
                         <Name>
-                            name
+                            <div>{selectedConversation?.users.username}{selectedConversation?.chat_name}</div>
                         </Name>
                     </IconClick>
                 </LeftHeader>
@@ -105,7 +110,7 @@ const Conversation = ({selectedConversation}:any) => {
                     </IconClick>
                 </RightHeader>
             </Header>
-            <Chat>
+            <Chat id='scroll'>
             {messages.map((message:any,key) => {return <Message key={key} message={message} />})}
             </Chat>
             <InputContainer>
@@ -115,7 +120,7 @@ const Conversation = ({selectedConversation}:any) => {
                 <IconClick>
                     <Clip/>
                 </IconClick>
-                    <Input id='send' onKeyDown={(e) =>e.key === 'Enter' ? sendMessage() : ""}/>
+                    <Input placeholder="enter your message" id='send' onKeyDown={(e) =>e.key === 'Enter' ? sendMessage() : ""}/>
                 <IconClick>
                     <Micro/>
                 </IconClick>
@@ -136,6 +141,7 @@ const Header = styled.div`
     align-items: center;
     background-color: ${backgroundColor};
     border-left: 1px #303d45 solid;
+    height:55px;
 `;
 const Name = styled.div`
     color:${colorIcon};
@@ -157,9 +163,15 @@ const Options = styled(MoreVertIcon)`
     color:${colorIcon};
 `;
 const Chat = styled.div`
-    padding: 20px;
-    min-height: 90%;
-    background:repeat url(${background})
+    height: calc(100% - 125px);
+    background:repeat url(${background});
+    overflow: scroll;
+    -ms-overflow-style: none; /* for Internet Explorer, Edge */
+    scrollbar-width: none; /* for Firefox */
+    overflow-y: scroll;
+    ::-webkit-scrollbar {
+    display: none; /* for Chrome, Safari, and Opera */
+    }
 `
 const InputContainer = styled.div`
     background-color:${backgroundColor};
@@ -192,5 +204,7 @@ const Input = styled.input`
     background-color: #2a3942;
     border:none;
     text-decoration: none !important;
+    text-indent: 10px; 
+    outline:none;
 `;
 export default Conversation;

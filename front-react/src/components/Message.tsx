@@ -3,7 +3,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { RootState } from '../redux/Store';
-import { backgroundColor, colorIcon } from '../style/variable';
+import { backgroundColor, colorIcon, colorMessageIncoming, colorMessageOutgoing, fontColor, timeColor } from '../style/variable';
 
 const Message = ({message}:any) => {
     const session = useSelector((state: RootState) => state.session)
@@ -11,15 +11,6 @@ const Message = ({message}:any) => {
     return (
         <Container>
             {message.user_from === session?.user?.id  ? 
-                <DmIncoming>
-                    <Text>
-                        {message.message}
-                    </Text>
-                    <DateView>
-                        {date}
-                    </DateView>
-                </DmIncoming>
-            :
                 <DmOutgoing>
                     <Text>
                         {message.message}
@@ -28,6 +19,15 @@ const Message = ({message}:any) => {
                         {date}
                     </DateView>
                 </DmOutgoing>
+            :
+                <DmIncoming>
+                    <Text>
+                        {message.message}
+                    </Text>
+                    <DateView>
+                        {date}
+                    </DateView>
+                </DmIncoming>
             }
 
         </Container>
@@ -35,20 +35,37 @@ const Message = ({message}:any) => {
 };
 
 const Container = styled.div`
+padding-top: 20px;
 `;
-const DmOutgoing = styled.div`
-    border-radius: 50px 10px 10px 50px;
+const Dm = styled.div`
     background-color: ${backgroundColor};
     width:fit-content;
-    padding: 5px 30px;
-    margin-left: auto;
+    padding: 5px 30px 10px 30px;
+    border-radius: 8px;
+    position:relative;
+    margin: 5px;
+    :first-child{
+        margin-top: 0;
+
+    }
 `;
-const DmIncoming = styled(DmOutgoing)`
-    border-radius: 10px 50px 50px 10px;
+const DmIncoming = styled(Dm)`
+    background-color: ${colorMessageIncoming};
+`;
+
+const DmOutgoing = styled(Dm)`
+    margin-left: auto;
+    background-color: ${colorMessageOutgoing};
 `;
 const Text = styled.div`
-    color:${colorIcon}
+    color:${fontColor}
 `;
-const DateView = styled.div``;
+const DateView = styled.div`
+    color:${timeColor};
+    font-size:10px;
+    position:absolute;
+    right:4px;
+    bottom:3px;
+`;
 
 export default Message;

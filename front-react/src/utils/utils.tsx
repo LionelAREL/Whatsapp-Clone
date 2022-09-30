@@ -12,3 +12,13 @@ export function isSelectedChat(socketData:any,selectedConversation:any){
         return false;
     }
 }
+
+export function checkPinMessageNavbar(convList:any){
+    let boolConv = true;
+    for(let conv of convList){
+        if(conv.watched == false){
+            boolConv = !boolConv
+        }
+    }
+    return boolConv;
+}

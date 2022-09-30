@@ -21,7 +21,7 @@ const router = createBrowserRouter([
     errorElement: <Error404 />,
     children: [
       {
-        path: "/",
+        path: "/chat",
         element: <Chat/>,
       },
     ],
@@ -32,11 +32,11 @@ const router = createBrowserRouter([
     errorElement: <Error404 />,
     children: [
       {
-        path: "login",
+        path: "/login",
         element: <Login/>,
       },
       {
-        path: "sign-up",
+        path: "/sign-up",
         element: <SignUp/>,
       },
     ],

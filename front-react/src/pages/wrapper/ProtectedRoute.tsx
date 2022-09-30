@@ -1,11 +1,12 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { RootState } from '../../redux/Store';
 import Cookies from 'universal-cookie';
 import AuthService from '../../services/authentification';
 import {loading, setSession} from './../../redux/CounterSlice'
 import { WebSocketProvider } from '../../services/websocket';
+import { CircularProgress } from '@mui/material';
 
 const ProtectedRoute = () => {
     const session = useSelector((state: RootState) => state.session)
@@ -26,21 +27,18 @@ const ProtectedRoute = () => {
         if(session.loading==false){
             // initialize loading 
             dispatch(loading())
-            AuthService.getSession().then(session => {dispatch(setSession(session.user))})
-            console.log(session)
+            AuthService.getSession().then((session:any) => {dispatch(setSession(session.user))})
         }
         return (
         <div>
-            loading
+            <CircularProgress />
         </div>
         );
     }
     else{
         //disconnected
         return(
-            <div>
-                you must be connected
-            </div>
+            <Navigate to="/login" />
         )
     }
 };

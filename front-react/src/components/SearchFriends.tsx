@@ -53,8 +53,8 @@ const SearchFriend = ({setCurrentdispalySide}:any) => {
 
     return (
         <Container>
-            <Input id="search-friends" onKeyDown={search} />
             <ButtonCreateGroup onClick={() => createGroup()}>Create new groupe</ButtonCreateGroup>
+            <Input placeholder="search friends" id="search-friends" onKeyDown={search} />
             <LoadingWrapper loading={loading}>
 
                 <ContainerList>
@@ -95,7 +95,9 @@ const SearchFriend = ({setCurrentdispalySide}:any) => {
     );
 };
 
-const ButtonCreateGroup = styled(Button)``;
+const ButtonCreateGroup = styled(Button)`
+    margin-top: 20px !important;
+`;
 
 const Container = styled.div`
     display: flex;
@@ -110,8 +112,11 @@ const Input = styled.input`
     margin: 20px auto;
     background-color: ${backgroundColor2};
     border: none;
-    height: 25px;
+    height: 30px;
     border-radius: 5px;
+    text-indent: 15px; 
+    font-size: 17px;
+    outline:none;
 `;
 
 const ContainerList = styled.div`

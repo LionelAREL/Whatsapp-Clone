@@ -14,38 +14,46 @@ import { WebSocketContext } from '../services/websocket';
 const Chat = () => {
     const [currentDisplaySide,setCurrentdispalySide] = useState(0);
     const [selectedConversation,setSelectedConversation] = useState<any>(null);
-    const [noWatchedMessage,setNoWatchMessage] = useState<any>([])//[{type,to}]
+    const [noWatchedMessage,setNoWatchedMessage] = useState(true)
     const chatSocket = useContext(WebSocketContext);
 
     useEffect(() => {
+        //connection au websocket
         chatSocket.onopen = function(e) {
             console.log("connexion to socket")
         };
 
+        //relancement de la connection lors de la fermeture
         chatSocket.onclose = function(e) {
             console.error('socket closed unexpectedly');
+            setTimeout(function() {
+                chatSocket.onopen = function(e) {
+                    console.log("connexion to socket")
+                };
+              }, 1000);
         };
-        chatSocket.onmessage = function(e:any) {
+
+        //fonction callback du listener
+        const setBadgeOnMessageReceive = (e:any) => {
             const data = JSON.parse(e.data);
-            console.log("onmessage",data);
+            console.log("12",data)
+            if(data.type == 'chat_message_private' || data.type == 'chat_message_group'){
+                setNoWatchedMessage(false);
+            }
         }
 
-    },[])
+        //met le badge a la convList quand on recoit un message
+        chatSocket.addEventListener("message",setBadgeOnMessageReceive);
 
-        //gestion des messages recus par le websocket
-        //Websocket
-        chatSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            console.log("onmessage",data);
-            console.log(data.type)
-        };
+        return () => {chatSocket.removeEventListener("message",setBadgeOnMessageReceive);console.log("end")}
+    },[])
 
     return (
         <Container>
             <LeftSide>
-                <NavBar setCurrentdispalySide={setCurrentdispalySide} />
+                <NavBar setCurrentdispalySide={setCurrentdispalySide} currentDisplaySide={currentDisplaySide} noWatchedMessage={noWatchedMessage}/>
                 <Displayer currentDisplaySide={currentDisplaySide} 
-                ConversationList = {<ConversationList setSelectedConversation={setSelectedConversation} />}
+                ConversationList = {<ConversationList setSelectedConversation={setSelectedConversation} setNoWatchedMessage={setNoWatchedMessage} selectedConversation={selectedConversation} currentDisplaySide={currentDisplaySide} />}
                 SearchFriends = {<SearchFriends setCurrentdispalySide={setCurrentdispalySide} />}
                 FriendsRequest = {<FriendsRequest/>}
                 CreateGroup = {<CreateGroup setCurrentdispalySide={setCurrentdispalySide}/>}

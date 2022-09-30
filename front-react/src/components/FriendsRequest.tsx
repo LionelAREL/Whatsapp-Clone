@@ -25,13 +25,17 @@ const FriendsRequest = () => {
 
     useEffect(() => {
         getFriendsRequest();
-        chatSocket.onmessage = function(e:any) {
+        function refreshOnMessageReceive(e:any) {
             const data = JSON.parse(e.data);
             if(data.type == 'friend_request'){
-                console.log("recieve friends request");
+                console.log("FrendRequest recieve friends request");
                 getFriendsRequest();
             }
         }
+
+        chatSocket.addEventListener("message",refreshOnMessageReceive);
+
+        return () => chatSocket.removeEventListener("message",refreshOnMessageReceive)
     },[]);
 
     const sendResponse = (user:any,accept:any) => {
@@ -69,7 +73,7 @@ const FriendsRequest = () => {
                         })
                     }
                 {
-                    friendsRequest.length == 0 && <div>no invitation</div> && loading
+                    friendsRequest.length == 0 && !loading && <NoInvitationText>no invitation</NoInvitationText>
                 }
                 </ContainerList>
             </LoadingWrapper>
@@ -126,6 +130,12 @@ const ProfilImage = styled(AccountCircleIcon)`
     color: ${colorIcon};
 `;
 const ButtonDemand = styled(Button)``;
+
+const NoInvitationText = styled.div`
+    text-align: center;
+    margin-top: 20px;
+    font-size: 20px;
+`;
 
 
 export default FriendsRequest;

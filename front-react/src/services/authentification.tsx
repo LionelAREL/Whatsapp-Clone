@@ -12,7 +12,6 @@ return fetch(ACCOUNT_URL + "session/", {
   })
   .then((res) => res.json())
   .then((data) => {
-      console.log(data)
       return data;
   })
   .catch((err) => {
@@ -23,7 +22,6 @@ return fetch(ACCOUNT_URL + "session/", {
 const getCSRFToken = () => {
   fetch(ACCOUNT_URL + "CSRFToken/",{credentials: "include"})
   .then((data) => {
-      console.log(data);
   })
   .catch((err) => {
       console.log(err);
@@ -31,6 +29,7 @@ const getCSRFToken = () => {
 };
 
 const isResponseOk = (response:any) =>  {
+  // console.log(response)
   if (Number(response.status) >= 200 && Number(response.status) <= 299) {
       return response.json();
   } else {
@@ -69,7 +68,6 @@ const signUp = (username:string,password:string) => {
   })
   .then(isResponseOk)
   .then((data) => {
-      console.log(data);
       return data;
   })
   .catch((err) => {
@@ -83,7 +81,6 @@ const logout = () => {
   })
   .then(isResponseOk)
   .then((data) => {
-      console.log(data);
   }).then(() =>{
     document.location.assign('/login');}
   )

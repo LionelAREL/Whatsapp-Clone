@@ -3,4 +3,8 @@ export const backgroundColor = "#202c33";
 export const backgroundColor2 = "#111b21";
 export const profilHeaderSize = "40px";
 export const borderColor = "#303d45";
-
+export const fontColor = "#e9edef";
+export const timeColor = "#a5aaad";
+export const colorMessageIncoming = "#202c33";
+export const colorMessageOutgoing = "#005c4b";
+export const dotColorNotification = "green"

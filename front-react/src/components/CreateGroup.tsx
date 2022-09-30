@@ -54,6 +54,12 @@ const CreateGroup = ({setCurrentdispalySide}:any) => {
                 let message = `groupe ${data.chat_name} ${chat_group} creer par ${session.user.username} !`
                 console.log(message);
                 chatSocket.send(JSON.stringify({
+                    'type': 'chat_create_group',
+                    'user_from' : user_from,
+                    'chat_group' : chat_group,
+                }));
+                console.log("msg envoyé")
+                chatSocket.send(JSON.stringify({
                     'type': 'chat_message_group',
                     'user_from' : user_from,
                     'chat_group' : chat_group,
@@ -124,7 +130,9 @@ const ProfilImage = styled(AccountCircleIcon)`
     color: ${colorIcon};
 `;
 
-const Return = styled(Button)``;
+const Return = styled(Button)`
+    margin: 20px 0 !important ;
+`;
 
 const Forms = styled(Form)`
     display: flex;

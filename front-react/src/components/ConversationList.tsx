@@ -5,51 +5,108 @@ import { backgroundColor, borderColor, colorIcon } from '../style/variable';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LoadingWrapper from './LoadingWrapper';
 import { WebSocketContext } from '../services/websocket';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/Store';
+import { checkPinMessageNavbar } from '../utils/utils';
 
 
-const ConversationList = ({setSelectedConversation}:any) => {
+const ConversationList = ({setSelectedConversation,setNoWatchedMessage,selectedConversation,currentDisplaySide}:any) => {
     const [chats,setChats] = useState([]);
     const [loading,setLoading] = useState(true)
     const chatSocket:any = useContext(WebSocketContext);
-
+    const session = useSelector((state: RootState) => state.session)
 
     useEffect(() => {
         getChats();
-        chatSocket.onmessage = function(e:any) {
+        function refreshOnMessage(e:any) {
             const data = JSON.parse(e.data);
             if(data.type == 'chat_message_private' || data.type == 'chat_message_group'){
-                console.log("recieve message");
+                console.log("ConvList recieve message");
                 getChats();
-                //notification 
+            }
+            if(data.type == "watched_message_group" || data.type == "watched_message_private"){
+                console.log("ConvList recieve watched message");
+                getChats();
             }
         }
+        chatSocket.addEventListener("message",refreshOnMessage);
+
+        return () => chatSocket.removeEventListener("message",refreshOnMessage)
+
     },[]);
 
+    useEffect(() => {
+        function refreshConvOnClick(e:any) {
+            const data = JSON.parse(e.data);
+            if((data.type == 'chat_message_private' && data.chat_id == selectedConversation?.id && selectedConversation?.chat_type=="chat_private") || (data.type == 'chat_message_group' && data.chat_id == selectedConversation?.id && selectedConversation?.chat_type=="chat_group")){
+                clickConversation(null,selectedConversation);
+                getChats();
+            }
+        }
+        chatSocket.addEventListener("message",refreshConvOnClick)
+        return () => chatSocket.removeEventListener("message",refreshConvOnClick)
+    },[selectedConversation]);
+
+
     const getChats = () => {
-        setLoading(true)
-        fetchData.getChatsPrivate().then((data1) => {
-            fetchData.getChatsGroup().then((data) => {
-                let temp = data1.concat(data);
-                temp.sort(function(a:any,b:any){
-                    return (new Date(b.last_update).getTime() - new Date(a.last_update).getTime());
+        if(currentDisplaySide == 0){
+            setLoading(true)
+            fetchData.getChatsPrivate().then((data1) => {
+                fetchData.getChatsGroup().then((data) => {
+                    let temp = data1.concat(data);
+                    temp.sort(function(a:any,b:any){
+                        return (new Date(b.last_update).getTime() - new Date(a.last_update).getTime());
+                    });
+                    setChats(temp);
+                    console.log(checkPinMessageNavbar(temp))
+                    setNoWatchedMessage(checkPinMessageNavbar(temp));
                 });
-                setChats(temp);
             });
-        });
-        setLoading(false)
+            setLoading(false)
+        }
     }
+
+    const clickConversation = (e:any,conversation:any) => {
+        e?.preventDefault();
+        //set view message
+         if(conversation.chat_type == 'chat_private'){
+                  //send watched message
+            let user_to = conversation.users.id;
+            let user_from = session.user.id
+            console.log(`message private watched from ${user_from} to ${user_to}`)
+            chatSocket.send(JSON.stringify({
+                'type': 'watched_message_private',
+                'user_from' : user_to,
+                'user_to' : user_from,
+            }));
+            console.log("msg envoyé")
+          }
+          if(conversation.chat_type == 'chat_group'){
+                //send watched message
+                let chat_id = conversation.id;
+                let user_from = session.user.id
+                console.log(`message group watched from ${user_from} to ${chat_id}`)
+                chatSocket.send(JSON.stringify({
+                    'type': 'watched_message_group',
+                    'user_from' : user_from,
+                    'chat_group' : chat_id,
+                }));
+                console.log("msg envoyé")
+            }    
+    }
+
     return (
         <Container>
             <LoadingWrapper loading={loading}>
                 {chats.map((conversation:any,key) => {
                     return (
-                    <Conversation key={conversation.id} onClick={(e) => {e.preventDefault();setSelectedConversation(conversation);console.log("chat selected : ",conversation)}} >
+                    <Conversation key={conversation.id} onClick={(e) => {clickConversation(e,conversation);setSelectedConversation(conversation);}} >
                         <ProfilImage/>
                         <Text>
                             {conversation.chat_type == 'chat_group'  ? conversation.chat_name : conversation.users.username}
                         </Text>
-                        {/* <Badge>
-                        </Badge> */}
+                        <Badge hidden={conversation.watched}>
+                        </Badge> 
                     </Conversation>);
                 
                 
@@ -65,7 +122,14 @@ const Container = styled.div`
     flex-direction: column;
     background-color: ${backgroundColor};
     height: 100%;
+    overflow: scroll;
     border-right: 1px solid ${borderColor};
+    -ms-overflow-style: none; /* for Internet Explorer, Edge */
+    scrollbar-width: none; /* for Firefox */
+    overflow-y: scroll;
+    ::-webkit-scrollbar {
+    display: none; /* for Chrome, Safari, and Opera */
+}
 `;
 const Conversation = styled.div`
     background-color: #111b21;
@@ -93,10 +157,11 @@ const Text = styled.div`
 
 const Badge = styled.div`
     background-color: green;
+    position:relative;
     border-radius: 50%;
-    height: 20px;
-    width: 20px;
-    margin-left: 20px;
+    height: 15px;
+    width: 15px;
+    right:20px;
 `;
 
 export default ConversationList;

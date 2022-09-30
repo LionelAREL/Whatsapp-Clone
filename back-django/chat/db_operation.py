@@ -81,3 +81,7 @@ def getChatGroup(chat_group_id):
 @database_sync_to_async
 def getAllChatGroup(user_from):
     return list(ChatGroup.objects.filter(users__id__contains=user_from.id))
+
+@database_sync_to_async
+def getUsersInChatGroup(chat_group):
+    return list(chat_group.users.all())

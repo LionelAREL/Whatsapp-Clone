@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from .models import ChatPrivate
+from .models import ChatPrivate, ChatGroup
 from django.dispatch import receiver
 from django.db.models.signals import m2m_changed,post_save,pre_save
 from django.contrib.auth import get_user_model
@@ -18,5 +18,3 @@ def create_friends_list(sender, **kwargs):
     if(Friend.objects.filter(user=user).exists()):
         return
     Friend.objects.create(user=user)
-
-

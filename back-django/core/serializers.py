@@ -76,6 +76,7 @@ class UserListSerializer(serializers.ModelSerializer):
 class ChatListSerializer(serializers.ModelSerializer):
     users = serializers.SerializerMethodField()
     chat_type = serializers.SerializerMethodField()
+    watched = serializers.SerializerMethodField()
 
 class ChatPrivateListSerializer(ChatListSerializer):
     count = serializers.SerializerMethodField()
@@ -87,12 +88,18 @@ class ChatPrivateListSerializer(ChatListSerializer):
         return serializer.data
     def get_chat_type(self,instance):
         return "chat_private"
+    def get_watched(self,instance):
+        notWatched = MessagePrivate.objects.filter(chat=instance,user_to=self.context['request'].user,watched=False).exists()
+        return not notWatched
     class Meta:
         model = ChatPrivate
-        fields = ['id','users','count','chat_type','last_update']
+        fields = ['id','users','count','chat_type','last_update','watched']
 
 class ChatGroupListSerializer(ChatListSerializer):
     count = serializers.SerializerMethodField()
+    def get_watched(self,instance):
+        notWatched = MessageGroup.objects.filter(chat_group=instance).exclude(watched_users__id__contains=self.context['request'].user.id).exists()
+        return not notWatched
     def get_count(self,instance):
         return number_no_watched_group_message(self.context['request'].user,instance.id)
     def get_users(self, instance):
@@ -103,7 +110,7 @@ class ChatGroupListSerializer(ChatListSerializer):
         return "chat_group"
     class Meta:
         model = ChatGroup
-        fields = ['id','users','chat_name','chat_type','count','last_update']
+        fields = ['id','users','chat_name','chat_type','count','last_update','watched']
 
 class ChatGroupCreateSerializer(serializers.ModelSerializer):
     class Meta:

@@ -103,6 +103,27 @@ class ChatPrivateConsumer(AsyncWebsocketConsumer):
 
             #save message 
             await createGroupMessage(user_from=user_from,chat_group=chat_group,message=message)
+
+        elif type_message == 'chat_create_group':  
+            user_from = text_data_json['user_from']
+            chat_group_id = text_data_json['chat_group']
+            print(f'{type_message} receive from {user_from} to chat {chat_group_id}')
+
+            #user id to user User
+            user_from = await getUserById(user_from)
+            chat_group = await getIdChatGroup(chat_group_id)
+
+            print(f'{type_message} send from {user_from} to chat {chat_group_id}')
+            # Send message to user_to group
+            chat_group_users = await getUsersInChatGroup(chat_group)
+            for user_group in chat_group_users:
+                await self.channel_layer.group_send(
+                    'chat_private_%s' % str(user_group.id),
+                    {
+                        'type': "new_group",
+                    }
+                )
+
         elif(type_message == "friend_request"):
             user_to = text_data_json['user_to']
             user_from = text_data_json['user_from']
@@ -261,3 +282,14 @@ class ChatPrivateConsumer(AsyncWebsocketConsumer):
             'user_from' : user_from,
             'type':type_message,
         }))
+
+    # Receive create message group
+    async def new_group(self, event):
+        user = self.scope['user']
+        chat_groups = await getAllChatGroup(user)
+        for chat_group in chat_groups:
+            print(f'connection to room : {chat_group.id} by {user.id}')
+            await self.channel_layer.group_add(
+                'chat_group_%s' % str(chat_group.id),
+                self.channel_name
+            )
