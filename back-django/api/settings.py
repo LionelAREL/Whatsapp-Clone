@@ -12,9 +12,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@un!c(fd$gxcik)*#pqv4lw!=n#=sep7pc1rt+%_riq)ti**xy'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['13.36.191.99',"www.whatsapp-clone-lionel-arel.ga","whatsapp-clone-lionel-arel.ga"]
+ALLOWED_HOSTS = ['13.36.191.99',".whatsapp-clone-lionel-arel.ga"]
 
 
 # Application definition
@@ -117,7 +117,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = 'backend/static/'
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
@@ -134,6 +134,8 @@ REST_FRAMEWORK = {
 
 AUTH_USER_MODEL = 'core.User'
 
+LOGIN_URL = '/backend/login/succeed/'
+LOGIN_REDIRECT_URL = "/backend/login/succeed/"
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
@@ -172,8 +174,8 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
 
-SESSION_COOKIE_DOMAIN = '.forum-api-lionel-arel.ga'
-CSRF_COOKIE_DOMAIN = '.forum-api-lionel-arel.ga'
+SESSION_COOKIE_DOMAIN = '.whatsapp-clone-lionel-arel.ga'
+CSRF_COOKIE_DOMAIN = '.whatsapp-clone-lionel-arel.ga'
 
 CHANNEL_LAYERS = {
     'default': {
