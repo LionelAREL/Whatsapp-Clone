@@ -23,11 +23,12 @@ deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
   environment: production
   script:
+    - cd /home/ubuntu/projects/react-forum-v2/
     - git revert --hard
     - git pull
     - sudo systemctl restart gunicorn
     - sudo systemctl restart nginx
-    - cd back-django
+    - cd back-django/
     - source env/bin/activate
     - python3 manage.py makemigrations
     - python3 manage.py migrate
