@@ -1,10 +1,11 @@
 import React from "react";
 import Cookies from "universal-cookie";
+import environments from "../environment/environment";
 
 const cookies = new Cookies();
 
-const ACCOUNT_URL = "http://127.0.0.1:8000/account/";
-const API_URL = "http://127.0.0.1:8000/api/";
+const ACCOUNT_URL = environments.protocol + environments.baseUrl + "/account/";
+const API_URL = environments.protocol + environments.baseUrl + "/api/";
 
 const getSession = () => {
 return fetch(ACCOUNT_URL + "session/", {
