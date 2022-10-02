@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-@un!c(fd$gxcik)*#pqv4lw!=n#=sep7pc1rt+%_riq)ti**xy
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['13.36.191.99',"www.whatsapp-clone-lionel-arel.ga","whatsapp-clone-lionel-arel.ga"]
 
 
 # Application definition
@@ -73,8 +73,12 @@ ASGI_APPLICATION = "api.asgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'bdd_react_whatsapp',
+        'USER': 'postgres',
+        'PASSWORD': 'PjK23lm9AYD5K6FNF04C',
+        'HOST': 'database-react-whatsapp.cr8pcsdso6dy.eu-west-3.rds.amazonaws.com',
+        'PORT': '5432',
     }
 }
 
@@ -115,6 +119,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
@@ -132,6 +138,9 @@ AUTH_USER_MODEL = 'core.User'
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    'https://13.36.191.99',
+    "https://www.whatsapp-clone-lionel-arel.ga",
+    "https://whatsapp-clone-lionel-arel.ga"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -140,19 +149,75 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    'https://13.36.191.99',
+    "https://www.whatsapp-clone-lionel-arel.ga",
+    "https://whatsapp-clone-lionel-arel.ga"
+]
+
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'https://13.36.191.99',
+    "https://www.whatsapp-clone-lionel-arel.ga",
+    "https://whatsapp-clone-lionel-arel.ga"
 ]
 CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
 CSRF_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_SAMESITE = 'None'
 
-CSRF_COOKIE_HTTPONLY = False 
+CSRF_COOKIE_HTTPONLY = False
 SESSION_COOKIE_HTTPONLY = False
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
+
+SESSION_COOKIE_DOMAIN = '.forum-api-lionel-arel.ga'
+CSRF_COOKIE_DOMAIN = '.forum-api-lionel-arel.ga'
+
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
-    },
+        'BACKEND': "channels_redis.core.RedisChannelLayer",
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],
+        },
+    }
 }
+
+LOGGING = {
+    'version': 1,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/var/log/django/django-error.log',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'daphne': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    }
+}
+
