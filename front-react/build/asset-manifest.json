@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.js": "/static/js/main.e734ec3c.js",
+    "static/media/logo.png": "/static/media/logo.0f74af526ffeb126190c.png",
+    "static/media/fruits-pattern.webp": "/static/media/fruits-pattern.1cc91053e1015d9992d0.webp",
+    "static/media/email-pattern.webp": "/static/media/email-pattern.db63d88ba7a915d34f5b.webp",
+    "index.html": "/index.html",
+    "main.e734ec3c.js.map": "/static/js/main.e734ec3c.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.e734ec3c.js"
+  ]
+}
