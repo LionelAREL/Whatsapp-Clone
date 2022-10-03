@@ -1,16 +1,21 @@
 import { useRouteError } from "react-router-dom";
+import styled from "styled-components";
 
 export default function Error404() {
   const error:any = useRouteError();
   console.error(error);
 
   return (
-    <div id="error-page">
-      <h1>Oops!</h1>
-      <p>Sorry, an unexpected error has occurred.</p>
-      <p>
-        <i>{error.statusText || error.message}</i>
-      </p>
-    </div>
+    <Container>
+      <div>
+        <p>Sorry, there some issue with this page : {error.statusText || error.message}</p>
+      </div>
+    </Container>
   );
 }
+
+const Container = styled.div`
+  display: grid;
+  place-items: center;
+  height: 100vh;
+`;

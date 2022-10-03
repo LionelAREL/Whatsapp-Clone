@@ -4,6 +4,8 @@ import { RootState } from '../../redux/Store';
 import Cookies from 'universal-cookie';
 import AuthService from '../../services/authentification';
 import {loading, setSession} from './../../redux/CounterSlice'
+import styled from "styled-components";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function Root() {
     const session = useSelector((state: RootState) => state.session)
@@ -11,8 +13,9 @@ export default function Root() {
     const cookie = new Cookies();
     if(session.user != null && session.loading == false && cookie.get('sessionid')!=undefined){
         //connected
+        console.log("connected")
         return(
-          <Navigate to="/chat" />
+          <Navigate to="/chat" replace={true} />
         );
     }
     else if(session.loading == true || (cookie.get('sessionid')!=undefined && session.loading==false)){
@@ -24,16 +27,21 @@ export default function Root() {
             console.log(session)
         }
         return (
-        <div>
-            loading
-        </div>
+        <Container>
+          <CircularProgress color="success" />
+        </Container>
         );
     }
     else{
-      console.log("123")
         //disconnected
         return(
           <Outlet/>
         )
     }
 }
+
+const Container = styled.div`
+  display:grid;
+  place-items: center;
+  height: 100vh;
+`

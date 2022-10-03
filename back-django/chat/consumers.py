@@ -160,7 +160,29 @@ class ChatPrivateConsumer(AsyncWebsocketConsumer):
             await deleteToRequestList(user_from,user_to)
             if accept:
                 print('add user to friendList')
-                await addToFriendList(user_from,user_to)
+            await addToFriendList(user_from,user_to)
+            await createPrivateMessage(user_from=user_from,user_to=user_to,message="")
+            if user_from and user_to and user_to.id != user_from.id:
+                await self.channel_layer.group_send(
+                    'chat_private_%s' % str(user_to.id),
+                    {
+                        'type': "chat_message_private",
+                        'user_from' : user_from.id,
+                        'user_to' : user_to.id,
+                        'message': "new conversation",
+                    }
+                )
+                # Send message to user_from group
+                await self.channel_layer.group_send(
+                    'chat_private_%s' % str(user_from.id),
+                    {
+                        'type': "chat_message_private",
+                        'user_from' : user_from.id,
+                        'user_to' : user_to.id,
+                        'message': "new conversation",
+                    }
+                )
+            
         elif(type_message == "watched_message_private"):
             user_to = text_data_json['user_to']
             user_from = text_data_json['user_from']
