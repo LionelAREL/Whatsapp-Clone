@@ -65,7 +65,7 @@ const Login:FunctionComponent<any> = () => {
             <Error>
                 {error}
             </Error>
-            <Button type="submit" variant="contained">submit</Button>
+            <Button type="submit" variant="contained">login</Button>
         </Forms>
         </Elements>
         </Container>

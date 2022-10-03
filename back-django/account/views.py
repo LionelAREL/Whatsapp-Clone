@@ -9,6 +9,8 @@ from django.http import JsonResponse
 import json
 from core.serializers import UserDetailSerializer
 from rest_framework.renderers import JSONRenderer
+from rest_framework.generics import CreateAPIView
+from .serializers import UserCreateSerializer
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')
 class GetCSRFToken(APIView):
@@ -48,4 +50,7 @@ def session_view(request):
     serializer = UserDetailSerializer(request.user)
     return JsonResponse({'user':serializer.data})
 
+@method_decorator(ensure_csrf_cookie, name='dispatch')
+class Register(CreateAPIView):
+    serializer_class = UserCreateSerializer
 

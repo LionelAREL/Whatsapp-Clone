@@ -13,21 +13,10 @@ import {store} from './redux/Store';
 import ProtectedRoute from "./pages/wrapper/ProtectedRoute";
 import SignUp from "./pages/SignUp";
 import Chat from "./pages/Chat";
-import { ThemeProvider } from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
 import App from "./pages/wrapper/App";
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <ProtectedRoute />,
-    errorElement: <Error404 />,
-    children: [
-      {
-        path: "/chat",
-        element: <Chat/>,
-      },
-    ],
-  },
   {
     path: "/",
     element: <Root/>,
@@ -44,6 +33,17 @@ const router = createBrowserRouter([
       {
         path: "/sign-up",
         element: <SignUp/>,
+      },
+    ],
+  },
+  {
+    path: "/",
+    element: <ProtectedRoute />,
+    errorElement: <Error404 />,
+    children: [
+      {
+        path: "/chat",
+        element: <Chat/>,
       },
     ],
   },

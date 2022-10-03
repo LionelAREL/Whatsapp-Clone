@@ -7,30 +7,38 @@ import { RootState } from '../redux/Store';
 const Message = ({message}:any) => {
     const session = useSelector((state: RootState) => state.session)
     let date = new Date(message.date).toTimeString().substring(1,5);
-    return (
-        <Container>
-            {message.user_from === session?.user?.id  ? 
-                <DmOutgoing>
-                    <Text>
-                        {message.message}
-                    </Text>
-                    <DateView>
-                        {date}
-                    </DateView>
-                </DmOutgoing>
-            :
-                <DmIncoming>
-                    <Text>
-                        {message.message}
-                    </Text>
-                    <DateView>
-                        {date}
-                    </DateView>
-                </DmIncoming>
-            }
-
-        </Container>
-    );
+    if(message.message != ""){
+        return (
+            <Container>
+                {message.user_from === session?.user?.id  ? 
+                    <DmOutgoing>
+                        <Text>
+                            {message.message}
+                        </Text>
+                        <DateView>
+                            {date}
+                        </DateView>
+                    </DmOutgoing>
+                :
+                    <DmIncoming>
+                        <Text>
+                            {message.message}
+                        </Text>
+                        <DateView>
+                            {date}
+                        </DateView>
+                    </DmIncoming>
+                }
+    
+            </Container>
+        );
+    }
+    else{
+        return (
+            <>
+            </>
+        );
+    }
 };
 
 const Container = styled.div`

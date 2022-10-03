@@ -8,6 +8,7 @@ import {loading, setSession} from './../../redux/CounterSlice'
 import { WebSocketProvider } from '../../services/websocket';
 import { CircularProgress } from '@mui/material';
 import App from './App';
+import styled from 'styled-components';
 
 const ProtectedRoute = () => {
     const session = useSelector((state: RootState) => state.session)
@@ -15,14 +16,13 @@ const ProtectedRoute = () => {
     const cookie = new Cookies();
     if(session.user != null && session.loading == false && cookie.get('sessionid')!=undefined){
         //connected
+        console.log("connected")
         return (
-            <div>
-                <WebSocketProvider>
-                    <App>
-                    <Outlet/>
-                    </App>
-                </WebSocketProvider>
-            </div>
+            <>
+                <App>
+                <Outlet/>
+                </App>
+            </>
         );
     }
     else if(session.loading == true || (cookie.get('sessionid')!=undefined && session.loading==false)){
@@ -33,9 +33,9 @@ const ProtectedRoute = () => {
             AuthService.getSession().then((session:any) => {dispatch(setSession(session.user))})
         }
         return (
-        <div>
-            <CircularProgress />
-        </div>
+        <Container>
+            <CircularProgress color="success" />
+        </Container>
         );
     }
     else{
@@ -45,5 +45,13 @@ const ProtectedRoute = () => {
         )
     }
 };
+
+
+
+const Container = styled.div`
+  display:grid;
+  place-items: center;
+  height: 100vh;
+`
 
 export default ProtectedRoute;
