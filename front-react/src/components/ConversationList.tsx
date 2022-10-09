@@ -90,7 +90,8 @@ const ConversationList = ({setSelectedConversation,setNoWatchedMessage,selectedC
                     'chat_group' : chat_id,
                 }));
                 console.log("msg envoyé")
-            }    
+            }   
+            setSelectedConversation(conversation);
     }
 
     return (
