@@ -91,6 +91,7 @@ const ConversationList = ({setSelectedConversation,setNoWatchedMessage,selectedC
                 }));
                 console.log("msg envoyé")
             }   
+            console.log("setSelectedConv",conversation)
             setSelectedConversation(conversation);
     }
 
@@ -99,7 +100,7 @@ const ConversationList = ({setSelectedConversation,setNoWatchedMessage,selectedC
             <LoadingWrapper loading={loading}>
                 {chats.map((conversation:any,key) => {
                     return (
-                    <Conversation style={{background:isSelectedChat(conversation,selectedConversation) ? theme.colorConvSelected : theme.backgroundColor2 }} key={conversation.id} onClick={(e) => {clickConversation(e,conversation);setSelectedConversation(conversation);}} >
+                    <Conversation style={{background:isSelectedChat(conversation,selectedConversation) ? theme.colorConvSelected : theme.backgroundColor2 }} key={conversation.id} onClick={(e) => {clickConversation(e,conversation)}} >
                         <ProfilImage/>
                         <Text>
                             {conversation.chat_type == 'chat_group'  ? conversation.chat_name : conversation.users.username}
