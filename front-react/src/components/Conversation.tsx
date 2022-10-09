@@ -85,7 +85,7 @@ const Conversation = ({selectedConversation}:any) => {
         chatSocket.addEventListener("message",refreshConvListOnMessageReceive)
         
         return () => chatSocket.removeEventListener("message",refreshConvListOnMessageReceive)
-    },[]);
+    },[selectedConversation]);
     
     useEffect(() => {
         scrollToBottom();
