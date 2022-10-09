@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-@un!c(fd$gxcik)*#pqv4lw!=n#=sep7pc1rt+%_riq)ti**xy
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['13.36.191.99',".whatsapp-clone-lionel-arel.ga"]
+ALLOWED_HOSTS = ['13.36.191.99',".chat-lionel-arel.ga"]
 
 
 # Application definition
@@ -141,8 +141,8 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'https://13.36.191.99',
-    "https://www.whatsapp-clone-lionel-arel.ga",
-    "https://whatsapp-clone-lionel-arel.ga"
+    "https://www.chat-clone-lionel-arel.ga",
+    "https://chat-lionel-arel.ga"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -152,16 +152,16 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'https://13.36.191.99',
-    "https://www.whatsapp-clone-lionel-arel.ga",
-    "https://whatsapp-clone-lionel-arel.ga"
+    "https://www.chat-lionel-arel.ga",
+    "https://chat-lionel-arel.ga"
 ]
 
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'https://13.36.191.99',
-    "https://www.whatsapp-clone-lionel-arel.ga",
-    "https://whatsapp-clone-lionel-arel.ga"
+    "https://www.chat-lionel-arel.ga",
+    "https://chat-lionel-arel.ga"
 ]
 CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
 CSRF_COOKIE_SAMESITE = 'None'
@@ -174,8 +174,8 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
 
-SESSION_COOKIE_DOMAIN = '.whatsapp-clone-lionel-arel.ga'
-CSRF_COOKIE_DOMAIN = '.whatsapp-clone-lionel-arel.ga'
+SESSION_COOKIE_DOMAIN = '.chat-lionel-arel.ga'
+CSRF_COOKIE_DOMAIN = '.chat-lionel-arel.ga'
 
 CHANNEL_LAYERS = {
     'default': {
