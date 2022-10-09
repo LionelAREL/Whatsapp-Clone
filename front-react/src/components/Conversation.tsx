@@ -26,6 +26,7 @@ const Conversation = ({selectedConversation}:any) => {
     }
 
     function getMessage(){
+        console.log("selected conv : " ,selectedConversation)
         if (selectedConversation != null){
             if(selectedConversation.chat_type == "chat_private"){
                 fetchData.getMessagesPrivate(selectedConversation.id,1).then(data => {setMessages(data.results);})
