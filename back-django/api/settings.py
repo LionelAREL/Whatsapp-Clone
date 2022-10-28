@@ -106,7 +106,7 @@ except:
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': 'dbWhatsapp',
             'USER': 'postgres',
-            'PASSWORD': "dbwhatsapp",
+            'PASSWORD': "dbWhatsapp",
             'HOST': 'dbwhatsapp.coivorc7u40d.eu-west-3.rds.amazonaws.com',
             'PORT': '5432',
         }
