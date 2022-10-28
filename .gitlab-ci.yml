@@ -1,19 +1,25 @@
 stages:
   - deploy
-
+variables:
+  GIT_STRATEGY: none
+  BUILD_DIR : "react-forum-v2"
+  FRONT_DIR : "front-react"
+  BACK_DIR : "back-django"
 deploy-job:
   stage: deploy  
   environment: production
   script:
-    - cd /home/ubuntu/projects/react-forum-v2/
-    - cd /home/ubuntu/projects/react-forum-v2/back-django/
+    - cd /home/ubuntu/"$BUILD_DIR"/
+    - sudo git config --global --add safe.directory /home/ubuntu/"$BUILD_DIR"/
+    - sudo git pull
+    - cd /home/ubuntu/"$BUILD_DIR"/"$BACK_DIR"/
     - source env/bin/activate
     - python3 manage.py makemigrations
     - python3 manage.py migrate
     - python3 manage.py collectstatic --noinput
-    - cd /home/ubuntu/projects/react-forum-v2/front-react/
-    - npm install
-    - npm run build --prod
+    - cd /home/ubuntu/"$BUILD_DIR"/"$FRONT_DIR"/
+    - sudo npm install --legacy-peer-deps
+    - sudo npm run build --prod
     - sudo systemctl restart gunicorn
     - sudo systemctl restart nginx
-
+    - sudo systemctl restart daphne
