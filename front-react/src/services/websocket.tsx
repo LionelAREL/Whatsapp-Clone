@@ -1,7 +1,12 @@
 import { createContext } from "react";
 import enrionments from "../environment/environment";
-export let SOCKET_URL = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') ? 
- 'ws://' + enrionments.baseUrl + "/ws/chat/" : 'wss://' + enrionments.baseUrl + "/wss/ws/chat/"  ;
+let SOCKET_URL =""
+if((!process.env.NODE_ENV || process.env.NODE_ENV === 'development')){
+ SOCKET_URL = 'ws://' + enrionments.baseUrl + "/ws/chat/"
+}
+else{
+  SOCKET_URL = 'wss://' + enrionments.baseUrl + "/wss/ws/chat/";
+}
 export const WebSocketContext = createContext(new WebSocket(SOCKET_URL));
 
 export const WebSocketProvider = (props : any) => {
