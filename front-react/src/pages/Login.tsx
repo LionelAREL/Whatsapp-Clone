@@ -25,12 +25,12 @@ const Login:FunctionComponent<any> = () => {
         AuthService.getCSRFToken();
     },[]);
 
-    const onSubmitLogin = (data:any)  =>  {
+    function onSubmitLogin(data:any){
             console.log(data)
             AuthService.login(data.username,data.password).then((user) => dispatch(setSession(user))).then((_) => {navigate("/chat")}).catch(async error => {setError((await error)?.detail)});
         };
 
-    const handleClickShowPassword = () => {
+        function handleClickShowPassword(){
             setShowPassword(true);
         };
     

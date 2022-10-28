@@ -7,7 +7,6 @@ import Displayer from '../components/Displayer';
 import FriendsRequest from '../components/FriendsRequest';
 import NavBar from '../components/NavBar';
 import SearchFriends from '../components/SearchFriends';
-import enrionments from '../environment/environment';
 import {SOCKET_URL, WebSocketProvider} from '../services/websocket';
 
 
@@ -35,7 +34,7 @@ const Chat = () => {
         };
 
         //fonction callback du listener
-        const setBadgeOnMessageReceive = (e:any) => {
+        function setBadgeOnMessageReceive(e:any) {
             const data = JSON.parse(e.data);
             if(data.type == 'chat_message_private' || data.type == 'chat_message_group'){
                 setNoWatchedMessage(false);

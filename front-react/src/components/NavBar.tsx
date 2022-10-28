@@ -37,7 +37,7 @@ const NavBar:any = ({setCurrentdispalySide,currentDisplaySide,noWatchedMessage}:
     const handleCloseModal = () => {setOpenModal(false)}
 
     const [value, setValue] = React.useState(true);
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    function handleChange (event: React.ChangeEvent<HTMLInputElement>){
       setValue((event.target as any).value);
       dispatch(setDark((event.target as any).value == 'true' ? true : false))
         }
@@ -45,7 +45,7 @@ const NavBar:any = ({setCurrentdispalySide,currentDisplaySide,noWatchedMessage}:
     const theme:any = useTheme();
 
     
-    const logout = () => {
+    function logout() {
         AuthService.logout().then(() => dispatch(logoutSession()))
     };
 
@@ -79,7 +79,7 @@ const NavBar:any = ({setCurrentdispalySide,currentDisplaySide,noWatchedMessage}:
         }
     },[currentDisplaySide]);
 
-    const changeDisplay = (e:any,displayNumber:number) => {
+    function changeDisplay (e:any,displayNumber:number){
         e.preventDefault();
         setCurrentdispalySide(displayNumber)
     }

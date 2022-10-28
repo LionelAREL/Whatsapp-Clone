@@ -24,7 +24,7 @@ const SignUp = () => {
         AuthService.getCSRFToken();
     },[]);
 
-    const onSubmitLogin = (data:any)  =>  {
+    function onSubmitLogin(data:any){
             console.log(data)
             AuthService.signUp(data.username,data.password).then((user) => dispatch(setSession(user))).then((_) => {navigate("/login")}).catch(async error => {setError((await error)?.detail)});
         };
