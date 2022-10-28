@@ -1,4 +1,10 @@
+import os
 from pathlib import Path
+import botocore 
+import boto3
+import botocore.session 
+from aws_secretsmanager_caching import SecretCache, SecretCacheConfig 
+import json
 from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -14,7 +20,7 @@ SECRET_KEY = 'django-insecure-@un!c(fd$gxcik)*#pqv4lw!=n#=sep7pc1rt+%_riq)ti**xy
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['13.36.191.99',".chat-lionel-arel.ga"]
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -71,17 +77,40 @@ ASGI_APPLICATION = "api.asgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'bdd_react_whatsapp',
-        'USER': 'postgres',
-        'PASSWORD': 'PjK23lm9AYD5K6FNF04C',
-        'HOST': 'database-react-whatsapp.cr8pcsdso6dy.eu-west-3.rds.amazonaws.com',
-        'PORT': '5432',
-    }
-}
+try:
+    client = botocore.session.get_session().create_client(service_name='secretsmanager',region_name='eu-west-3')
+    cache_config = SecretCacheConfig()
+    cache = SecretCache( config = cache_config, client = client)
 
+    secret_name = 'djangoEcommerce'
+    secret = json.loads(cache.get_secret_string(secret_name))['password']
+
+    ssm = boto3.client('ssm')
+    parameter = ssm.get_parameter(Name='db-endpoint', WithDecryption=True)
+    endpoint = parameter['Parameter']['Value']
+    print(endpoint)
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'djangoEcommerce',
+            'USER': 'postgres',
+            'PASSWORD': secret,
+            'HOST': endpoint,
+            'PORT': '5432',
+        }
+    }
+except:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'dbWhatsapp',
+            'USER': 'postgres',
+            'PASSWORD': "dbWhatsapp",
+            'HOST': 'db-whatsapp.coivorc7u40d.eu-west-3.rds.amazonaws.com',
+            'PORT': '5432',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -140,7 +169,6 @@ LOGIN_REDIRECT_URL = "/backend/login/succeed/"
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
-    'https://13.36.191.99',
     "https://www.chat-clone-lionel-arel.ga",
     "https://chat-lionel-arel.ga"
 ]
@@ -151,7 +179,6 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
-    'https://13.36.191.99',
     "https://www.chat-lionel-arel.ga",
     "https://chat-lionel-arel.ga"
 ]
@@ -159,7 +186,6 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
-    'https://13.36.191.99',
     "https://www.chat-lionel-arel.ga",
     "https://chat-lionel-arel.ga"
 ]
