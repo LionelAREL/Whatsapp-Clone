@@ -163,13 +163,10 @@ REST_FRAMEWORK = {
 
 AUTH_USER_MODEL = 'core.User'
 
-LOGIN_URL = '/backend/login/succeed/'
-LOGIN_REDIRECT_URL = "/backend/login/succeed/"
-
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
-    "https://www.chat-clone-lionel-arel.ga",
+    "https://www.chat-lionel-arel.ga",
     "https://chat-lionel-arel.ga"
 ]
 
