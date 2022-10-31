@@ -36,6 +36,7 @@ const SearchFriend = ({setCurrentdispalySide}:any) => {
     }
 
     function sendInvitation(user:any){
+        console.log(session)
         console.log(`friend_request from ${session?.user?.id} to ${user.id}`)
         chatSocket.send(JSON.stringify({
             'type': 'friend_request',

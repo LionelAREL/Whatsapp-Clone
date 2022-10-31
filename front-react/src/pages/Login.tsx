@@ -27,7 +27,7 @@ const Login:FunctionComponent<any> = () => {
 
     function onSubmitLogin(data:any){
             console.log(data)
-            AuthService.login(data.username,data.password).then((user) => dispatch(setSession(user))).then((_) => {navigate("/chat")}).catch(async error => {setError((await error)?.detail)});
+            AuthService.login(data.username,data.password).then((_) => {navigate("/chat",{replace:true})}).catch(async error => {setError((await error)?.detail)});
         };
 
         function handleClickShowPassword(){
