@@ -35,7 +35,7 @@ const CreateGroup = ({setCurrentdispalySide}:any) => {
         fetchData.getFriends().then((data) => setFriends(data));
     },[]);
 
-    const handleToggle = (value:any) => () => {
+    function handleToggle(value:any){
         const currentIndex = selectFriendsGroup.indexOf(value);
         const newChecked = [...selectFriendsGroup];
     
@@ -47,7 +47,7 @@ const CreateGroup = ({setCurrentdispalySide}:any) => {
         setSelectFriendsGroup(newChecked);
       };
 
-    const submit = (data:any) => {
+    function submit(data:any) {
         console.log(selectFriendsGroup,data.groupName)
         if(selectFriendsGroup.length !=0){
             fetchData.postChatGroup(data.groupName,selectFriendsGroup).then((data) => {
@@ -88,7 +88,7 @@ const CreateGroup = ({setCurrentdispalySide}:any) => {
                             secondaryAction={
                             <Checkbox
                                 edge="end"
-                                onChange={handleToggle(friend.id)}
+                                onChange={() => {handleToggle(friend.id)}}
                                 checked={selectFriendsGroup.indexOf(friend.id) !== -1}
                                 inputProps={{ 'aria-labelledby': labelId }}
                             />

@@ -18,7 +18,7 @@ const SearchFriend = ({setCurrentdispalySide}:any) => {
     const [loading,setLoading] = useState(false);
 
 
-    const search = (e:any) =>{
+    function search(e:any){
         if (e?.key === 'Enter') {
             let searchUser:any = document.querySelector("#search-friends");
             let username = searchUser.value; 
@@ -35,7 +35,7 @@ const SearchFriend = ({setCurrentdispalySide}:any) => {
         }
     }
 
-    const sendInvitation = (user:any) =>{
+    function sendInvitation(user:any){
         console.log(`friend_request from ${session?.user?.id} to ${user.id}`)
         chatSocket.send(JSON.stringify({
             'type': 'friend_request',

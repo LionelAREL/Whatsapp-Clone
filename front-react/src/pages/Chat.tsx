@@ -7,8 +7,7 @@ import Displayer from '../components/Displayer';
 import FriendsRequest from '../components/FriendsRequest';
 import NavBar from '../components/NavBar';
 import SearchFriends from '../components/SearchFriends';
-import enrionments from '../environment/environment';
-import {WebSocketProvider} from '../services/websocket';
+import {SOCKET_URL, WebSocketProvider} from '../services/websocket';
 
 
 
@@ -16,7 +15,6 @@ const Chat = () => {
     const [currentDisplaySide,setCurrentdispalySide] = useState(0);
     const [selectedConversation,setSelectedConversation] = useState<any>(null);
     const [noWatchedMessage,setNoWatchedMessage] = useState(true)
-    let SOCKET_URL = 'ws://' + enrionments.baseUrl + "/ws/chat/";
     const [chatSocket,setChatSocket] = useState(new WebSocket(SOCKET_URL));
 
     function setAndConnectWebsocket(){
@@ -36,7 +34,7 @@ const Chat = () => {
         };
 
         //fonction callback du listener
-        const setBadgeOnMessageReceive = (e:any) => {
+        function setBadgeOnMessageReceive(e:any) {
             const data = JSON.parse(e.data);
             if(data.type == 'chat_message_private' || data.type == 'chat_message_group'){
                 setNoWatchedMessage(false);

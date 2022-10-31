@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import { Form, useNavigate } from 'react-router-dom';
+import { Form, Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { setSession } from '../redux/CounterSlice';
 import AuthService from '../services/authentification';
@@ -24,7 +24,7 @@ const SignUp = () => {
         AuthService.getCSRFToken();
     },[]);
 
-    const onSubmitLogin = (data:any)  =>  {
+    function onSubmitLogin(data:any){
             console.log(data)
             AuthService.signUp(data.username,data.password).then((user) => dispatch(setSession(user))).then((_) => {navigate("/login")}).catch(async error => {setError((await error)?.detail)});
         };
@@ -64,6 +64,9 @@ const SignUp = () => {
             </Error>
             <Button type="submit" variant="contained">create accout</Button>
         </Forms>
+            <p>
+                <Already to="/login">You already have an account ? Click here</Already>
+            </p>
         </Elements>
         </Container>
         );
@@ -79,6 +82,11 @@ const Forms = styled(Form)`
     flex-direction: column;
     align-items: center;
 `
+const Already = styled(Link)`
+    list-style: none;
+    text-decoration: none;
+    color:black;
+`;
 const Elements = styled.div`
     display:flex;
     justify-content: center;

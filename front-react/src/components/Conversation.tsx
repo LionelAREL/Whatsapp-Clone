@@ -26,6 +26,7 @@ const Conversation = ({selectedConversation}:any) => {
     }
 
     function getMessage(){
+        console.log("selected conv : " ,selectedConversation)
         if (selectedConversation != null){
             if(selectedConversation.chat_type == "chat_private"){
                 fetchData.getMessagesPrivate(selectedConversation.id,1).then(data => {setMessages(data.results);})
@@ -64,7 +65,6 @@ const Conversation = ({selectedConversation}:any) => {
             (messageInputDom as any).value = '';
             console.log("msg envoyé")
         }
-        getMessage();
     };
     
 
@@ -77,15 +77,15 @@ const Conversation = ({selectedConversation}:any) => {
     useEffect(() => {
         function refreshConvListOnMessageReceive(e:any) {
             const data = JSON.parse(e.data);
-            if(data.type == 'chat_message_private' || data.type == 'chat_message_group'){
-                console.log("recieve message");
+            if(data.type == 'chat_message_private' || data.type == 'chat_message_group' || data.type == 'watched_message_private' || data.type == 'watched_message_group'){
+                console.log("recieve message from Conv");
                 getMessage();
             }
         }
         chatSocket.addEventListener("message",refreshConvListOnMessageReceive)
         
         return () => chatSocket.removeEventListener("message",refreshConvListOnMessageReceive)
-    },[]);
+    },[selectedConversation]);
     
     useEffect(() => {
         scrollToBottom();

@@ -38,7 +38,7 @@ const FriendsRequest = () => {
         return () => chatSocket.removeEventListener("message",refreshOnMessageReceive)
     },[]);
 
-    const sendResponse = (user:any,accept:any) => {
+    function sendResponse(user:any,accept:any) {
         console.log(`friend response from ${session.user.id} to ${user.id} is ${accept}`);
         chatSocket.send(JSON.stringify({
             'type': 'friend_response',

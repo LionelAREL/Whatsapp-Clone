@@ -2,7 +2,7 @@ import { Button, FormControl, IconButton, InputAdornment, OutlinedInput, TextFie
 import React, { FunctionComponent} from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { Form, NavLink, useNavigate } from "react-router-dom";
+import { Form, Link, NavLink, useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
 import AuthService from "../services/authentification";
 import {setSession} from './../redux/CounterSlice'
@@ -25,12 +25,12 @@ const Login:FunctionComponent<any> = () => {
         AuthService.getCSRFToken();
     },[]);
 
-    const onSubmitLogin = (data:any)  =>  {
+    function onSubmitLogin(data:any){
             console.log(data)
             AuthService.login(data.username,data.password).then((user) => dispatch(setSession(user))).then((_) => {navigate("/chat")}).catch(async error => {setError((await error)?.detail)});
         };
 
-    const handleClickShowPassword = () => {
+        function handleClickShowPassword(){
             setShowPassword(true);
         };
     
@@ -67,6 +67,9 @@ const Login:FunctionComponent<any> = () => {
             </Error>
             <Button type="submit" variant="contained">login</Button>
         </Forms>
+        <p>
+            <NotAccount to="/sign-up">You don't have an account ? Click here</NotAccount>
+        </p>
         </Elements>
         </Container>
         );
@@ -106,5 +109,11 @@ const InputPassword = styled(TextField)`
     width:250px;
     margin:10px 0 !important;
 `
+
+const NotAccount = styled(Link)`
+    list-style: none;
+    text-decoration: none;
+    color:black;
+`;
 
 export default Login;

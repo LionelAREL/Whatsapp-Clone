@@ -47,7 +47,7 @@ const ConversationList = ({setSelectedConversation,setNoWatchedMessage,selectedC
     },[selectedConversation]);
 
 
-    const getChats = () => {
+    function getChats(){
         if(currentDisplaySide == 0){
             setLoading(true)
             fetchData.getChatsPrivate().then((data1) => {
@@ -64,7 +64,7 @@ const ConversationList = ({setSelectedConversation,setNoWatchedMessage,selectedC
         }
     }
 
-    const clickConversation = (e:any,conversation:any) => {
+    function clickConversation(e:any,conversation:any){
         e?.preventDefault();
         //set view message
          if(conversation.chat_type == 'chat_private'){
@@ -90,7 +90,7 @@ const ConversationList = ({setSelectedConversation,setNoWatchedMessage,selectedC
                     'chat_group' : chat_id,
                 }));
                 console.log("msg envoyé")
-            }    
+            }   
     }
 
     return (

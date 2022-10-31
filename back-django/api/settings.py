@@ -1,4 +1,10 @@
+import os
 from pathlib import Path
+import botocore 
+import boto3
+import botocore.session 
+from aws_secretsmanager_caching import SecretCache, SecretCacheConfig 
+import json
 from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -12,7 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@un!c(fd$gxcik)*#pqv4lw!=n#=sep7pc1rt+%_riq)ti**xy'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -71,13 +77,40 @@ ASGI_APPLICATION = "api.asgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+try:
+    client = botocore.session.get_session().create_client(service_name='secretsmanager',region_name='eu-west-3')
+    cache_config = SecretCacheConfig()
+    cache = SecretCache( config = cache_config, client = client)
 
+    secret_name = 'djangoEcommerce'
+    secret = json.loads(cache.get_secret_string(secret_name))['password']
+
+    ssm = boto3.client('ssm')
+    parameter = ssm.get_parameter(Name='db-endpoint', WithDecryption=True)
+    endpoint = parameter['Parameter']['Value']
+    print(endpoint)
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'djangoEcommerce',
+            'USER': 'postgres',
+            'PASSWORD': secret,
+            'HOST': endpoint,
+            'PORT': '5432',
+        }
+    }
+except:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'dbWhatsapp',
+            'USER': 'postgres',
+            'PASSWORD': "dbWhatsapp",
+            'HOST': 'dbwhatsapp.coivorc7u40d.eu-west-3.rds.amazonaws.com',
+            'PORT': '5432',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -115,6 +148,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
@@ -128,10 +163,11 @@ REST_FRAMEWORK = {
 
 AUTH_USER_MODEL = 'core.User'
 
-
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    "https://www.chat-lionel-arel.ga",
+    "https://chat-lionel-arel.ga"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -140,19 +176,73 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    "https://www.chat-lionel-arel.ga",
+    "https://chat-lionel-arel.ga"
+]
+
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    "https://www.chat-lionel-arel.ga",
+    "https://chat-lionel-arel.ga"
 ]
 CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
 CSRF_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_SAMESITE = 'None'
 
-CSRF_COOKIE_HTTPONLY = False 
+CSRF_COOKIE_HTTPONLY = False
 SESSION_COOKIE_HTTPONLY = False
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
+
+SESSION_COOKIE_DOMAIN = '.chat-lionel-arel.ga'
+CSRF_COOKIE_DOMAIN = '.chat-lionel-arel.ga'
+
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
-    },
+        'BACKEND': "channels_redis.core.RedisChannelLayer",
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],
+        },
+    }
 }
+
+LOGGING = {
+    'version': 1,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/var/log/django/django-error.log',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'daphne': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    }
+}
+
