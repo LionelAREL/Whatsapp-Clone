@@ -32,11 +32,19 @@ const Chat = () => {
                 setAndConnectWebsocket();
               }, 1000);
         };
+    },[chatSocket])
 
-        //fonction callback du listener
-        function setBadgeOnMessageReceive(e:any) {
-            const data = JSON.parse(e.data);
-            if(data.type == 'chat_message_private' || data.type == 'chat_message_group'){
+    React.useEffect(() => {
+          //fonction callback du listener
+          function setBadgeOnMessageReceive(e:any) {
+              const data = JSON.parse(e.data);
+              console.log(selectedConversation,data)
+            if((data.type == 'chat_message_private' && (selectedConversation === null || data.chat_id !== selectedConversation?.id) && (selectedConversation === null || selectedConversation?.chat_type=="chat_private")) 
+            || 
+            (data.type == 'chat_message_group' && (selectedConversation === null || data.chat_group !== selectedConversation?.id) && (selectedConversation === null || selectedConversation?.chat_type=="chat_group"))
+            ||
+            (selectedConversation?.chat_type !== data.type && ((data.type == 'chat_message_group' && data.chat_group !== selectedConversation?.id) || (data.type == 'chat_message_private' && data.chat_id !== selectedConversation?.id)))
+            ){
                 setNoWatchedMessage(false);
             }
         }
@@ -45,7 +53,7 @@ const Chat = () => {
         chatSocket.addEventListener("message",setBadgeOnMessageReceive);
 
         return () => {chatSocket.removeEventListener("message",setBadgeOnMessageReceive)}
-    },[chatSocket])
+    },[selectedConversation])
 
     return (
         <WebSocketProvider socket={chatSocket}>
@@ -67,6 +75,7 @@ const Chat = () => {
 
 const LeftSide = styled.div`
     height:100vh;
+    min-height: 700px !important;
 `;
 const Container = styled.div`
     display:flex;

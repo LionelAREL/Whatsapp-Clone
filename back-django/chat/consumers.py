@@ -144,6 +144,14 @@ class ChatPrivateConsumer(AsyncWebsocketConsumer):
                         'user_to' : user_to.id,
                     }
                 )
+            await self.channel_layer.group_send(
+                    'chat_private_%s' % str(user_from.id),
+                    {
+                        'type': type_message,
+                        'user_from' : user_from.id,
+                        'user_to' : user_to.id,
+                    }
+                )
 
 
         elif(type_message == "friend_response"):

@@ -13,20 +13,23 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logoutSession, setDark } from '../redux/CounterSlice';
 import fetchData from '../services/fetch';
 import AuthService from '../services/authentification';
+import { RootState } from '../redux/Store';
 
 const NavBar:any = ({setCurrentdispalySide,currentDisplaySide,noWatchedMessage}:any) => {
     const dispatch = useDispatch();
     const chatSocket = useContext(WebSocketContext)
     const [pin,setPin] = useState(true);
+    const session = useSelector((state: RootState) => state.session);
+
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-      setAnchorEl(event.currentTarget);
+      setAnchorEl(event.currentTarget)
     };
     const handleClose = () => {
       setAnchorEl(null);
@@ -37,10 +40,11 @@ const NavBar:any = ({setCurrentdispalySide,currentDisplaySide,noWatchedMessage}:
     const handleCloseModal = () => {setOpenModal(false)}
 
     const [value, setValue] = React.useState(true);
+
     function handleChange (event: React.ChangeEvent<HTMLInputElement>){
       setValue((event.target as any).value);
       dispatch(setDark((event.target as any).value == 'true' ? true : false))
-        }
+    }
 
     const theme:any = useTheme();
 
@@ -54,7 +58,7 @@ const NavBar:any = ({setCurrentdispalySide,currentDisplaySide,noWatchedMessage}:
     useEffect(() => {
         function refreshOnMessageReceive(e:any) {
             const data = JSON.parse(e.data);
-            if(data.type == 'friend_request'){
+            if(data.type == 'friend_request' && data.user_from !== session.user.id){
                 console.log("NavBar receive friendRequest")
                 if(currentDisplaySide == 2){
                     setPin(false)
@@ -160,6 +164,7 @@ const IconClick = styled(IconButton)`
 
 const Container = styled.div`
     width: 30vw !important;
+    min-width: 300px !important;
     background-color:${(props) => props.theme.backgroundColor};
     display: flex;
     flex-direction: row;

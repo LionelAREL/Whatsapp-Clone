@@ -15,6 +15,7 @@ import SignUp from "./pages/SignUp";
 import Chat from "./pages/Chat";
 import styled, { ThemeProvider } from "styled-components";
 import App from "./pages/wrapper/App";
+import './index.scss';
 
 const router = createBrowserRouter([
   {

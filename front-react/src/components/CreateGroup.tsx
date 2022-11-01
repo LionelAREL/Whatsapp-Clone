@@ -76,7 +76,6 @@ const CreateGroup = ({setCurrentdispalySide}:any) => {
 
     return (
         <Container>
-            <Return onClick={() => {setCurrentdispalySide(1)}}>return</Return>
             <Forms onSubmit={handleSubmit(submit)}>
                 <InputGroupName sx={{"& .MuiInputBase-root": {color: theme.fontColor},"& .MuiFormLabel-root": {color: theme.fontColor},"& .MuiOutlinedInput-notchedOutline": {borderColor: theme.fontColor} }} error={errors.groupName && true} label="group name" variant="outlined" {...register("groupName",{required:true})} helperText={errors.groupName && "name group required"} />
                     <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: '${(props) => props.theme.backgroundColor}',color:theme.fontColor,"& .MuiButtonBase-root": {color: theme.fontColor}, }}>
@@ -86,15 +85,15 @@ const CreateGroup = ({setCurrentdispalySide}:any) => {
                         <ListItem
                             key={friend.id}
                             secondaryAction={
-                            <Checkbox
+                                <Checkbox
                                 edge="end"
                                 onChange={() => {handleToggle(friend.id)}}
                                 checked={selectFriendsGroup.indexOf(friend.id) !== -1}
                                 inputProps={{ 'aria-labelledby': labelId }}
-                            />
+                                />
                             }
                             disablePadding
-                        >
+                            >
                             <ListItemButton>
                             <ListItemAvatar>
                                 <ProfilImage/>
@@ -108,6 +107,7 @@ const CreateGroup = ({setCurrentdispalySide}:any) => {
                     {selectFriendsGroup.length == 0 && alreadySubmit && "choose a least one friend"}
                 <Button type="submit" variant="contained">submit</Button>
             </Forms>
+                    <Return onClick={() => {setCurrentdispalySide(1)}}>return</Return>
         </Container>
     );
 };
@@ -117,7 +117,8 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     background-color: ${(props) => props.theme.backgroundColor};
-    height: 100%;
+    height : calc(100vh - 56px);
+    min-height: 700px !important;
     border-right: 1px solid ${(props) => props.theme.borderColor2};
 `;
 
@@ -141,6 +142,7 @@ const Forms = styled(Form)`
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 30px;
 `
 
 const Error = styled.div`

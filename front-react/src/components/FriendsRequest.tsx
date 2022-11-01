@@ -85,12 +85,14 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     background-color: ${(props) => props.theme.backgroundColor};
-    height: 100%;
+    height: calc(100vh - 56px);
+    min-height: 700px !important;
     border-right: 1px solid ${(props) => props.theme.borderColor2};
 `;
 
 const Input = styled.input`
     width:80%;
+    min-width: 800px !important;
     margin: 20px auto;
     background-color: ${(props) => props.theme.backgroundColor};
     border: none;

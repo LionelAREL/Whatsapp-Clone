@@ -24,14 +24,9 @@ const SearchFriend = ({setCurrentdispalySide}:any) => {
             let username = searchUser.value; 
             setLastSearch(searchUser.value);
             setLoading(true)
-            fetchData.getSearchUsers(username).then((data) => {setFriendsSearch(data);console.log(data)});
+            fetchData.getSearchUsers(username).then((data) => {setFriendsSearch(data)});
             setLoading(false)
 
-        }
-        else if(e == undefined){
-            setLoading(true)
-            fetchData.getSearchUsers(lastSearch).then((data) => {setFriendsSearch(data);console.log(data)});
-            setLoading(false)
         }
     }
 
@@ -43,12 +38,26 @@ const SearchFriend = ({setCurrentdispalySide}:any) => {
             'user_to': user.id,
         }));
         console.log("msg envoyé");
-        search(undefined);
     }
 
     const createGroup = () => {
         setCurrentdispalySide(3)
     }
+
+    React.useEffect(() => {
+        function handleFriendRequestOfMine(e:any){
+            const data = JSON.parse(e.data);
+            if(data.type == 'friend_request'){
+                console.log("SearchFriend recieve friends request");
+                if(data.user_from == session.user.id){
+                    fetchData.getSearchUsers(lastSearch).then((data) => {setFriendsSearch(data)});
+                }
+            }
+        }
+        chatSocket.addEventListener("message",handleFriendRequestOfMine);
+
+        return () => chatSocket.removeEventListener("message",handleFriendRequestOfMine)
+    });
 
     return (
         <Container>
@@ -102,7 +111,8 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     background-color: ${(props) => props.theme.backgroundColor};
-    height: 100%;
+    height: calc(100vh - 56px);
+    min-height: 700px !important;
     border-right: 1px solid ${(props) => props.theme.borderColor2};
 `;
 
