@@ -37,7 +37,9 @@ const ConversationList = ({setSelectedConversation,setNoWatchedMessage,selectedC
     useEffect(() => {
         function refreshConvOnClick(e:any) {
             const data = JSON.parse(e.data);
-            if((data.type == 'chat_message_private' && data.chat_id == selectedConversation?.id && selectedConversation?.chat_type=="chat_private") || (data.type == 'chat_message_group' && data.chat_id == selectedConversation?.id && selectedConversation?.chat_type=="chat_group")){
+            if((data.type == 'chat_message_private' && data.chat_id == selectedConversation?.id && selectedConversation?.chat_type=="chat_private") 
+            || 
+            (data.type == 'chat_message_group' && data.chat_group == selectedConversation?.id && selectedConversation?.chat_type=="chat_group")){
                 clickConversation(null,selectedConversation);
                 getChats();
             }
@@ -119,7 +121,8 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     background-color: ${(props) => props.theme.backgroundColor};
-    height: 100%;
+    height: calc(100vh - 56px);
+    min-height: 700px;
     overflow: scroll;
     border-right: 1px solid ${(props) => props.theme.borderColor};
     -ms-overflow-style: none; /* for Internet Explorer, Edge */

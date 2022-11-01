@@ -134,8 +134,8 @@ const Conversation = ({selectedConversation}:any) => {
 const iconInputMessageSize = "80px"; 
 
 const Container = styled.div`
-    width:70vw;
-    height:100vh
+    width:70%;
+    height:100vh;
     `;
     const Header = styled.div`
     display: flex;
@@ -171,13 +171,18 @@ color:${(props) => props.theme.colorIcon};
 const InputContainer = styled.div`
     background-color:${(props) => props.theme.backgroundColor};
     height:70px;
-    width:70vw;
+    width:70%;
+    min-width: 700px;
     position:absolute;
-    bottom:0;
     display: flex;
+    bottom: 0px;
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
+    @media (max-height:755px) {
+        top:686px;
+        
+    };
 `;
 const Micro = styled(MicIcon)`
     width: ${(props) => props.theme.iconInputMessageSize};
@@ -193,7 +198,8 @@ const Clip = styled(AttachFileIcon)`
 `;
 const Input = styled.input`
     color:${(props) => props.theme.colorIcon};
-    width:85%;
+    width:85vw;
+    min-width: 450px;
     height:30px;
     border-radius:5px;
     border:none;
@@ -204,6 +210,7 @@ const Input = styled.input`
 `;
 const Chat = styled.div`
     height: calc(100% - 125px);
+    min-height: 700px !important;
     overflow: scroll;
     -ms-overflow-style: none; /* for Internet Explorer, Edge */
         scrollbar-width: none; /* for Firefox */
