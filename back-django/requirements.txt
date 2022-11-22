@@ -2,6 +2,9 @@ asgiref==3.5.2
 attrs==22.1.0
 autobahn==22.7.1
 Automat==20.2.0
+aws-secretsmanager-caching==1.1.1.5
+boto3==1.26.14
+botocore==1.29.14
 cffi==1.15.1
 channels==3.0.5
 constantly==15.1.0
@@ -13,12 +16,16 @@ djangorestframework==3.13.1
 hyperlink==21.0.0
 idna==3.4
 incremental==21.3.0
+jmespath==1.0.1
 psycopg2==2.9.3
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.21
 pyOpenSSL==22.0.0
+python-dateutil==2.8.2
+python-decouple==3.6
 pytz==2022.2.1
+s3transfer==0.6.0
 service-identity==21.1.0
 six==1.16.0
 sqlparse==0.4.2
@@ -27,4 +34,5 @@ twisted-iocpsupport==1.0.2
 txaio==22.2.1
 typing_extensions==4.3.0
 tzdata==2022.2
+urllib3==1.26.12
 zope.interface==5.4.0
