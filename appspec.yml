@@ -1,0 +1,23 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ubuntu/whatsapp-clone/
+file_exists_behavior: OVERWRITE
+hooks:
+  BeforeInstall:
+    - location: Scripts/beforeInstall.sh
+      timeout: 300
+      runas: root
+  Install:
+    - location: Scripts/install.sh
+      timeout: 300
+      runas: root
+  AfterInstall:
+    - location: Scripts/afterInstall.sh
+      timeout: 300
+      runas: root
+  ValidateService:
+    - location: Scripts/validate.sh
+      timeout: 300
+      runas: root
