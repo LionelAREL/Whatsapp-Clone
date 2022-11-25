@@ -78,7 +78,7 @@ client = botocore.session.get_session().create_client(service_name='secretsmanag
 cache_config = SecretCacheConfig()
 cache = SecretCache( config = cache_config, client = client)
 
-secret_name = 'amazon/clone'
+secret_name = 'whatsapp/clone'
 
 try :
     secret = json.loads(cache.get_secret_string(secret_name))['password']
