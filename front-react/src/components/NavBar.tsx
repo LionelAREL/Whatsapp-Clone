@@ -15,7 +15,6 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutSession, setDark } from '../redux/CounterSlice';
-import fetchData from '../services/fetch';
 import AuthService from '../services/authentification';
 import { RootState } from '../redux/Store';
 

@@ -54,6 +54,10 @@ class ChatPrivateConsumer(AsyncWebsocketConsumer):
             user_from = await getUserById(user_from)
             user_to = await getUserById(user_to)     
             message = text_data_json['message']
+
+            #save message 
+            await createPrivateMessage(user_from=user_from,user_to=user_to,message=message)
+
             # Send message to user_to group
             if user_from and user_to and user_to.id != user_from.id:
                 await self.channel_layer.group_send(
@@ -76,8 +80,40 @@ class ChatPrivateConsumer(AsyncWebsocketConsumer):
                     }
                 )
 
+        elif type_message == 'chat_calling_private':  
+            user_to = text_data_json['user_to']
+            user_from = text_data_json['user_from']
+
+            print(f'{type_message} receive from {user_from} to {user_to}')
+
+            #user id to user User
+            user_from = await getUserById(user_from)
+            user_to = await getUserById(user_to)     
+            message = text_data_json['message']
+            # Send message to user_to group
+            if user_from and user_to and user_to.id != user_from.id:
+                await self.channel_layer.group_send(
+                    'chat_private_%s' % str(user_to.id),
+                    {
+                        'type': 'chat_message_private',
+                        'user_from' : user_from.id,
+                        'user_to' : user_to.id,
+                        'message': message,
+                    }
+                )
+                # Send message to user_from group
+                await self.channel_layer.group_send(
+                    'chat_private_%s' % str(user_from.id),
+                    {
+                        'type': 'chat_message_private',
+                        'user_from' : user_from.id,
+                        'user_to' : user_to.id,
+                        'message': message,
+                    }
+                )
+
             #save message 
-                await createPrivateMessage(user_from=user_from,user_to=user_to,message=message)
+            await createPrivateCalling(user_from=user_from,user_to=user_to,message=message)
         elif type_message == 'chat_message_group':  
             user_from = text_data_json['user_from']
             chat_group_id = text_data_json['chat_group']
@@ -103,6 +139,34 @@ class ChatPrivateConsumer(AsyncWebsocketConsumer):
 
             #save message 
             await createGroupMessage(user_from=user_from,chat_group=chat_group,message=message)
+            
+        elif type_message == 'chat_calling_group':  
+            user_from = text_data_json['user_from']
+            chat_group_id = text_data_json['chat_group']
+
+            print(f'{type_message} receive from {user_from} to chat {chat_group_id}')
+
+            #user id to user User
+            user_from = await getUserById(user_from)
+            chat_group = await getIdChatGroup(chat_group_id)
+            message = text_data_json['message']
+
+            print(f'{type_message} send from {user_from} to chat {chat_group_id}')
+
+            #save message 
+            await createGroupCalling(user_from=user_from,chat_group=chat_group,message=message)
+
+            # Send message to user_to group
+            await self.channel_layer.group_send(
+                'chat_group_%s' % str(chat_group_id),
+                {
+                    'type': "chat_message_group",
+                    'user_from' : user_from.id,
+                    'chat_group' : chat_group_id,
+                    'message': message,
+                }
+            )
+
 
         elif type_message == 'chat_create_group':  
             user_from = text_data_json['user_from']
@@ -259,8 +323,40 @@ class ChatPrivateConsumer(AsyncWebsocketConsumer):
             'type':type_message,
         }))
 
+    # Receive calling from room private
+    async def chat_calling_private(self, event):
+        message = event['message']
+        user_to = event['user_to']
+        user_from = event['user_from']
+        type_message = event['type']
+        chat_id= await getIdChatPrivate(user_from, user_to)
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'user_from' : user_from,
+            'user_to' : user_to,
+            'message': message,
+            'chat_id':chat_id.id,
+            'type':type_message,
+        }))
+
     # Receive message from room group
     async def chat_message_group(self, event):
+        message = event['message']
+        chat_group = event['chat_group']
+        user_from = event['user_from']
+        type_message = event['type']
+
+        # Send message to WebSocket
+        await self.send(text_data=json.dumps({
+            'user_from' : user_from,
+            'chat_group':chat_group,
+            'type':type_message,
+
+        }))
+
+    # Receive calling from room group
+    async def chat_calling_group(self, event):
         message = event['message']
         chat_group = event['chat_group']
         user_from = event['user_from']

@@ -15,8 +15,17 @@ class ChatGroup(Chat):
     chat_name = models.CharField(max_length=50,default='')
 
 class Message(models.Model):
+    class TypeMessage(models.TextChoices):
+        CHAT = 'DM'
+        CALL = 'CL'
+        IMAGE = 'IMG'
+
+    type_message = models.CharField(max_length=3,choices=TypeMessage.choices,default=TypeMessage.CHAT)
+    image = models.ImageField(default=None,null=True)
     message = models.CharField(max_length=100)
     date = models.DateTimeField(auto_now=True)
+    call_token = models.CharField(max_length=100,null=True)
+    call_name = models.CharField(max_length=100,null=True)
     user_from = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,related_name="user_from",null=True)
 
 class MessagePrivate(Message):

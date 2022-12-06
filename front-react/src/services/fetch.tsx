@@ -125,6 +125,7 @@ const getChatsPrivate = () =>{
     })
     .then(isResponseOk)
     .then((data) => {
+        console.log(data)
         return data;
     });
 };

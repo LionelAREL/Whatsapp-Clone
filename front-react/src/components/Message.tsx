@@ -1,16 +1,40 @@
 import { AnyAsyncThunk } from '@reduxjs/toolkit/dist/matchers';
 import React from 'react';
-import { useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { setIsCalling } from '../redux/CounterSlice';
 import { RootState } from '../redux/Store';
+import { useDispatch, useSelector } from 'react-redux';
 
-const Message = ({message}:any) => {
+
+const Message = ({message, setConfig}:any) => {
+    const dispatch = useDispatch();
     const session = useSelector((state: RootState) => state.session)
     let date = new Date(message.date).toTimeString().substring(1,5);
-    if(message.message != ""){
+    
+    function handleCallingClick(){
+        setConfig((config:any) => {
+            config.token = message.call_token
+            config.channel = message.call_name
+            return config
+        })
+        dispatch(setIsCalling(true))
+    }
+
+    if(message.message != "" || message.type_message === "CL"){
+        if (message.user_from === session?.user?.id){
         return (
             <Container>
-                {message.user_from === session?.user?.id  ? 
+                {message.type_message === "CL" ?
+                    <DmOutgoing>
+                        <Text>
+                            message Calling GG
+                        </Text>
+                        <button onClick={handleCallingClick}>calling</button>
+                        <DateView>
+                            {date}
+                        </DateView>
+                    </DmOutgoing>
+                 :
                     <DmOutgoing>
                         <Text>
                             {message.message}
@@ -19,20 +43,37 @@ const Message = ({message}:any) => {
                             {date}
                         </DateView>
                     </DmOutgoing>
-                :
-                    <DmIncoming>
-                        <Text>
-                            {message.message}
-                        </Text>
-                        <DateView>
-                            {date}
-                        </DateView>
-                    </DmIncoming>
-                }
-    
-            </Container>
-        );
+                 }
+            </Container>)}
+        else{
+            return(
+                <Container>
+                    {message.type_message === "CL" ?
+                        <DmIncoming>
+                            <Text>
+                                Calling message
+                            </Text>
+                            <DateView>
+                                {date}
+                            </DateView>
+                        </DmIncoming>
+                    :
+                        <DmIncoming>
+                            <Text>
+                                {message.message}
+                            </Text>
+                            <DateView>
+                                {date}
+                            </DateView>
+                        </DmIncoming>
+                    }
+                    
+        
+                </Container>
+            );
+        }
     }
+
     else{
         return (
             <>

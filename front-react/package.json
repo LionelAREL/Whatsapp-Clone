@@ -26,6 +26,7 @@
     "sass": "^1.55.0",
     "sort-by": "^1.2.0",
     "styled-components": "^5.3.5",
+    "styled-css-grid": "^1.2.1",
     "typescript": "^4.8.3",
     "universal-cookie": "^4.0.4",
     "usehooks-ts": "^2.7.1",
