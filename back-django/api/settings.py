@@ -9,13 +9,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-@un!c(fd$gxcik)*#pqv4lw!=n#=sep7pc1rt+%_riq)ti**xy'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -101,7 +98,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-en'
+LANGUAGE_CODE = config('LANGUAGE_CODE')
 
 TIME_ZONE = 'UTC'
 
@@ -110,8 +107,6 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
 
@@ -134,22 +129,21 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:3000',
 ]
 
-CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_ALLOW_ALL = True
+###CORS
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS',default=[],cast=lambda v: [s.strip() for s in v.split(',')])
+CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS',default=[],cast=lambda v: [s.strip() for s in v.split(',')])
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
 ]
 CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
-CSRF_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_SAMESITE = 'None'
 
 CSRF_COOKIE_HTTPONLY = False 
 SESSION_COOKIE_HTTPONLY = False
 
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = config('CSRF_COOKIE_SAMESITE',default='None')
+SESSION_COOKIE_SAMESITE = config('SESSION_COOKIE_SAMESITE',default='None')
 
 CHANNEL_LAYERS = {
     'default': {
