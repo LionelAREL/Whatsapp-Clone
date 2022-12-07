@@ -18,21 +18,20 @@ class Message(models.Model):
     class TypeMessage(models.TextChoices):
         CHAT = 'DM'
         CALL = 'CL'
-        IMAGE = 'IMG'
+        FILE = 'FL'
 
     type_message = models.CharField(max_length=3,choices=TypeMessage.choices,default=TypeMessage.CHAT)
-    image = models.ImageField(default=None,null=True)
-    message = models.CharField(max_length=100)
+    file = models.CharField(max_length=500,default="",null=True)
+    message = models.CharField(max_length=500,default="")
     date = models.DateTimeField(auto_now=True)
-    call_token = models.CharField(max_length=100,null=True,required=False)
-    call_name = models.CharField(max_length=100,null=True,required=False)
+    call_token = models.CharField(max_length=500,null=True,blank=True)
+    call_name = models.CharField(max_length=500,null=True,blank=True)
     user_from = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,related_name="user_from",null=True)
 
 class MessagePrivate(Message):
     user_to = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,related_name="user_to",null=True)
     watched = models.BooleanField(default=False)
     chat = models.ForeignKey(ChatPrivate, on_delete=models.CASCADE,related_name="messagePrivate")
-
 
 class MessageGroup(Message):
     watched_users = models.ManyToManyField(get_user_model(),blank=True,related_query_name='watched_users')

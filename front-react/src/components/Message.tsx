@@ -42,7 +42,7 @@ const Message = ({message, setConfig}:any) => {
         // p: 4,
       };
 
-      
+    console.log(message)
     const modal = 
     <Modal
     open={open}
@@ -50,7 +50,7 @@ const Message = ({message, setConfig}:any) => {
     aria-labelledby={message.message}
     >
     <Box sx={style}>
-    <Image width={"80vw"} duration={0} src={message.image}></Image>
+    <Image fit="contain" duration={0} src={message.file}></Image>
     </Box>
   </Modal>;
 
@@ -68,9 +68,9 @@ const Message = ({message, setConfig}:any) => {
                         {callingMessage}
                         </Text>
                         {isCallingAvailable(message) ?
-                        <Button style={{backgroundColor:theme.colorIcon,marginTop:"10px"}} onClick={handleCallingClick}>{callingButton}</Button>
+                        <Button style={{backgroundColor:theme.backgroundColor,marginTop:"10px",color:theme.fontColor}} onClick={handleCallingClick}>{callingButton}</Button>
                         : 
-                        <Button style={{backgroundColor:theme.colorIcon,marginTop:"10px",cursor:"default"}} >{callingButtonExpired}</Button>
+                        <Button style={{backgroundColor:theme.backgroundColor,marginTop:"10px",cursor:"default",color:theme.fontColor}} >{callingButtonExpired}</Button>
                          }
                         <DateView>
                             {date}
@@ -96,9 +96,9 @@ const Message = ({message, setConfig}:any) => {
                             {callingMessage}
                             </Text>
                             {isCallingAvailable(message) ?
-                            <Button style={{backgroundColor:theme.colorIcon,marginTop:"10px"}} onClick={handleCallingClick}>{callingButton}</Button>
+                            <Button style={{backgroundColor:theme.backgroundColor,marginTop:"10px",color:theme.fontColor}} onClick={handleCallingClick}>{callingButton}</Button>
                             : 
-                            <Button style={{backgroundColor:theme.colorIcon,marginTop:"10px",cursor:"default"}} >{callingButtonExpired}</Button>
+                            <Button style={{backgroundColor:theme.backgroundColor,marginTop:"10px",cursor:"default",color:theme.fontColor}} >{callingButtonExpired}</Button>
                             }
                             <DateView>
                                 {date}
@@ -120,12 +120,12 @@ const Message = ({message, setConfig}:any) => {
             );
         }
     }
-    else if (message.type_message === "IMG"){
+    else if (message.type_message === "FL"){
         if (message.user_from === session?.user?.id){
         return(
             <DmOutgoing>
                     {modal}
-                    <CardMedia onClick={handleOpen} style={{height:"300px",width:"300px",cursor:"pointer"}} image={message.image}></CardMedia>
+                    <CardMedia onClick={handleOpen} style={{height:"300px",width:"300px",cursor:"pointer"}} image={message.file}></CardMedia>
                     <Text style={{marginTop:"8px"}}>
                         {message.message}
                     </Text>
@@ -139,7 +139,7 @@ const Message = ({message, setConfig}:any) => {
             return (
                 <DmIncoming>
                     {modal}
-                    <CardMedia onClick={handleOpen} style={{height:"300px",width:"300px",cursor:"pointer"}} image={message.image}></CardMedia>
+                    <CardMedia onClick={handleOpen} style={{height:"300px",width:"300px",cursor:"pointer"}} image={message.file}></CardMedia>
                     <Text style={{marginTop:"8px"}}>
                         {message.message}
                     </Text>

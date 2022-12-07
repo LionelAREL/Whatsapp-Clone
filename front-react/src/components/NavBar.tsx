@@ -117,7 +117,7 @@ const NavBar:any = ({setCurrentdispalySide,currentDisplaySide,noWatchedMessage}:
                         onClose={handleClose}
                     >
                         
-                        <MenuItem onClick={handleOpenModal} disableRipple>
+                        <MenuItem onClick={handleOpenModal}  disableRipple>
                         Theme
                         </MenuItem>
                         <Modal
@@ -126,10 +126,10 @@ const NavBar:any = ({setCurrentdispalySide,currentDisplaySide,noWatchedMessage}:
                             aria-labelledby="modal-modal-title"
                             aria-describedby="modal-modal-description"
                             >
-                            <ModalContainer >
+                            <ModalContainer>
                                 <div>
                                 <FormControl>
-                                <FormLabel>Theme</FormLabel>
+                                <FormLabel style={{color:theme.fontColor}}>Theme</FormLabel>
                                 <RadioGroup
                                     aria-labelledby="demo-controlled-radio-buttons-group"
                                     name="controlled-radio-buttons-group"
@@ -205,7 +205,8 @@ const StyledMenu = styled((props: MenuProps) => (
     />
   ))(({ theme }) => ({
     '& .MuiPaper-root': {
-        backgroundColor: theme.optionColor
+        backgroundColor: theme.optionColor,
+        color:theme.fontColor,
     }
   }));
 
@@ -214,6 +215,10 @@ const ModalContainer = styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    background-color: ${(props) => props.theme.backgroundColor};
+    padding:30px;
+    border-radius: 20px;
+    color:${(props) => props.theme.fontColor};
 `;
 
 export default NavBar;
