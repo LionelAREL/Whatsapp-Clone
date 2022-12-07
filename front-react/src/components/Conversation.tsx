@@ -8,31 +8,80 @@ import TagFacesIcon from '@mui/icons-material/TagFaces';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import MicIcon from '@mui/icons-material/Mic';
 import Message from './Message';
-import backgroundDark from './../assets/email-pattern.webp'
-import backgroundLight from './../assets/fruits-pattern.webp'
+import backgroundDark from './../assets/bg-light.png'
+import backgroundLight from './../assets/background.png'
 import fetchData from '../services/fetch';
 import { WebSocketContext } from '../services/websocket';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../redux/Store';
 import VideoCalling from './VideoCalling';
 import PhoneIcon from '@mui/icons-material/Phone';
 import VideocamIcon from '@mui/icons-material/Videocam';
-import { useTheme } from '@mui/material/styles';
-import { setIsCalling } from '../redux/CounterSlice';
 import { ClientConfig, createClient } from 'agora-rtc-react';
+import AWS from "aws-sdk";
+
+
 
 const Conversation = ({selectedConversation}:any) => {
-    const dispatch = useDispatch();
     const [messages,setMessages] = useState([]);
-    const [callAudio,setCallAudio] = useState(false)
     const [config,setConfig] = useState({token:"",appId:"d2160e16d6634613aba0588ea88fc4d8",callingType:""})
     const chatSocket = useContext(WebSocketContext)
     const session = useSelector((state: RootState) => state.session)
-    const theme = useTheme();
 
     const useClient = createClient({mode: "rtc",codec: "vp8"} as ClientConfig);
     const client = useClient();
+
+    const [file, setFile] = useState<any>(undefined);
+
+    const S3_BUCKET ='whatsapp-clone-bucket-files';
+    const REGION ='eu-west-3';
+    const ACCESS_KEY ='AKIA2LKTDJEARTZNKV56';
+    const SECRET_ACCESS_KEY ='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';
+
+    const awsConfig = {
+        bucketName: S3_BUCKET,
+        region: REGION,
+        accessKeyId: ACCESS_KEY,
+        secretAccessKey: SECRET_ACCESS_KEY,
+    }
+
+    AWS.config.update({
+        region: awsConfig.region,
+        accessKeyId: awsConfig.accessKeyId,
+        secretAccessKey: awsConfig.secretAccessKey
+      });
+      
+      const s3 = new AWS.S3({
+        apiVersion: "2006-03-01",
+        params: { Bucket: S3_BUCKET }
+      });
+
+      function uploadFile() {
+        if (!file) {
+          return new Promise((resolve, reject) => {
+            resolve(file)
+          });
+        }
+
+        var fileName = Date.now().toString() + "-" + file.image_url.name;
+        var folderKey = encodeURIComponent(session.user.id) + "/";
+      
+        var fileKey = folderKey + fileName;
+        console.log(file)
+        // Use S3 ManagedUpload class as it supports multipart uploads
+        var upload = new AWS.S3.ManagedUpload({
+          params: {
+            Bucket: awsConfig.bucketName,
+            Key: fileKey,
+            Body: file.image_url,
+            ContentType:file.image_url.type
+          }
+        });
+      
+        return upload.promise();
+      }
     
+
     function scrollToBottom(){
         let scroll_to_bottom:any = document.getElementById('scroll');
 		scroll_to_bottom.scrollTop = scroll_to_bottom.scrollHeight;
@@ -51,33 +100,43 @@ const Conversation = ({selectedConversation}:any) => {
     }
     
     function sendMessage () {
-        const messageInputDom = document.querySelector('#send');
-        const message:any = (messageInputDom as any).value;
-        const user_from = session.user.id
-        if(selectedConversation.chat_type == 'chat_private'){
-            let user_to:any = selectedConversation.users.id 
-            console.log(`message private from ${user_from} to user ${user_to} with message : ${message}`)
+        uploadFile().then((data:any) => {
+            console.log("NIIIIICE SEND WiTH WEBSOCKET", data,data.Location)
+
+            const messageInputDom = document.querySelector('#send');
+            const message:any = (messageInputDom as any).value;
+            const user_from = session.user.id
+            if(selectedConversation.chat_type == 'chat_private'){
+                    let user_to:any = selectedConversation.users.id 
+                    console.log(`message private from ${user_from} to user ${user_to} with message : ${message}`)
             chatSocket.send(JSON.stringify({
-                'type': 'chat_message_private',
-                'user_from' : user_from,
-                'user_to' : user_to,
-                'message': message,
-            }));
+                    'type': 'chat_message_private',
+                    'user_from' : user_from,
+                    'user_to' : user_to,
+                    'message': message,
+                    'format': file ? "FL" : "DM",
+                    'file' : data.Location,
+                }));
             (messageInputDom as any).value = '';
             console.log("msg envoyé")
-        }
-        else{
-            let chat_group = selectedConversation.id
-            console.log(`message group from ${user_from} to chat ${chat_group} with message : ${message}`)
-            chatSocket.send(JSON.stringify({
-                'type': 'chat_message_group',
-                'user_from' : user_from,
-                'chat_group' : chat_group,
-                'message': message,
-            }));
-            (messageInputDom as any).value = '';
-            console.log("msg envoyé")
-        }
+            }
+            else{
+                let chat_group = selectedConversation.id
+                console.log(`message group from ${user_from} to chat ${chat_group} with message : ${message}`)
+                chatSocket.send(JSON.stringify({
+                    'type': 'chat_message_group',
+                    'user_from' : user_from,
+                    'chat_group' : chat_group,
+                    'message': message,
+                    'format': file ? "FL" : "DM",
+                    'file' : data.Location,
+                }));
+                (messageInputDom as any).value = '';
+                console.log("msg envoyé")
+            }
+            
+            setFile(undefined)
+        });
     };
     
     useEffect(() => {
@@ -85,7 +144,6 @@ const Conversation = ({selectedConversation}:any) => {
         scrollToBottom();
     },[selectedConversation])
     
-    console.log(messages)
     useEffect(() => {
         function refreshConvListOnMessageReceive(e:any) {
             const data = JSON.parse(e.data);
@@ -128,7 +186,13 @@ const Conversation = ({selectedConversation}:any) => {
             console.log("msg envoyé")
         }
     }
-        
+    
+    const handleFileChange = (e:any) => {
+        let newData = { ...file };
+        newData["image_url"] = e.target.files[0];
+        setFile(newData);
+    };
+
     return (
         <Container>
             { session.isCalling ?<CallContainer> <VideoCalling client={client} config={config} ></VideoCalling> </CallContainer> : null }
@@ -165,8 +229,17 @@ const Conversation = ({selectedConversation}:any) => {
                     <Smiley/>
                 </IconClick>
                 <IconClick>
+                <label htmlFor="file" style={{cursor:"pointer"}}>
                     <Clip/>
+                </label>
+                <InputFile
+                    id="file"
+                    type="file" 
+                    name="image_url"
+                    accept="image/jpeg,image/png,image/gif"
+                    onChange={handleFileChange} />
                 </IconClick>
+                { file ? <FileName>{ file.image_url.name }</FileName> : null}
                     <Input placeholder="enter your message" id='send' onKeyDown={(e) =>e.key === 'Enter' ? sendMessage() : ""}/>
                 <IconClick>
                     <Micro/>
@@ -176,6 +249,27 @@ const Conversation = ({selectedConversation}:any) => {
     );
 };
 
+const InputFile = styled.input`
+    display: none;
+`
+const FileName = styled.div`
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 10px;
+    white-space: wrap;
+    max-width: 100px;
+    word-break: break-all;
+    
+    @supports (-webkit-line-clamp: 3) {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: initial;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+`
+
 const CallContainer = styled.div`
     position: absolute;
     top:55px;
@@ -184,6 +278,7 @@ const CallContainer = styled.div`
     z-index: 100;
 `
 const IconInputMessageSize = "80px"; 
+
 const Container = styled.div`
     width:70%;
     height:100vh;
@@ -257,7 +352,7 @@ const Clip = styled(AttachFileIcon)`
 const Input = styled.input`
     color:${(props) => props.theme.colorIcon};
     width:85vw;
-    min-width: 450px;
+    min-width: 400px;
     height:30px;
     border-radius:5px;
     border:none;

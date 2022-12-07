@@ -49,9 +49,7 @@ const SearchFriend = ({setCurrentdispalySide}:any) => {
             const data = JSON.parse(e.data);
             if(data.type == 'friend_request'){
                 console.log("SearchFriend recieve friends request");
-                if(data.user_from == session.user.id){
-                    fetchData.getSearchUsers(lastSearch).then((data) => {setFriendsSearch(data)});
-                }
+                fetchData.getSearchUsers(lastSearch).then((data) => {setFriendsSearch(data)});
             }
         }
         chatSocket.addEventListener("message",handleFriendRequestOfMine);

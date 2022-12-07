@@ -47,6 +47,7 @@ class ChatPrivateConsumer(AsyncWebsocketConsumer):
         if type_message == 'chat_message_private':  
             user_to = text_data_json['user_to']
             user_from = text_data_json['user_from']
+            format_message = text_data_json['format']
 
             print(f'{type_message} receive from {user_from} to {user_to}')
 
@@ -56,7 +57,11 @@ class ChatPrivateConsumer(AsyncWebsocketConsumer):
             message = text_data_json['message']
 
             #save message 
-            await createPrivateMessage(user_from=user_from,user_to=user_to,message=message)
+            if(format_message == "DM"):
+                await createPrivateMessage(user_from=user_from,user_to=user_to,message=message)
+            elif(format_message == "FL"):
+                file = text_data_json['file']
+                await createPrivateMessageFile(user_from=user_from,user_to=user_to,message=message,file=file)
 
             # Send message to user_to group
             if user_from and user_to and user_to.id != user_from.id:
@@ -90,6 +95,7 @@ class ChatPrivateConsumer(AsyncWebsocketConsumer):
             user_from = await getUserById(user_from)
             user_to = await getUserById(user_to)     
             message = text_data_json['message']
+
             # Send message to user_to group
             if user_from and user_to and user_to.id != user_from.id:
                 await self.channel_layer.group_send(
@@ -117,6 +123,7 @@ class ChatPrivateConsumer(AsyncWebsocketConsumer):
         elif type_message == 'chat_message_group':  
             user_from = text_data_json['user_from']
             chat_group_id = text_data_json['chat_group']
+            format_message = text_data_json['format']
 
             print(f'{type_message} receive from {user_from} to chat {chat_group_id}')
 
@@ -125,6 +132,13 @@ class ChatPrivateConsumer(AsyncWebsocketConsumer):
             chat_group = await getIdChatGroup(chat_group_id)
             message = text_data_json['message']
 
+            #save message 
+            if(format_message == "DM"):
+                await createGroupMessage(user_from=user_from,chat_group=chat_group,message=message)
+            elif(format_message == "FL"):
+                file = text_data_json['file']
+                await createGroupMessageFile(user_from=user_from,chat_group=chat_group,message=message,file=file)
+                
             print(f'{type_message} send from {user_from} to chat {chat_group_id}')
             # Send message to user_to group
             await self.channel_layer.group_send(
@@ -136,9 +150,6 @@ class ChatPrivateConsumer(AsyncWebsocketConsumer):
                     'message': message,
                 }
             )
-
-            #save message 
-            await createGroupMessage(user_from=user_from,chat_group=chat_group,message=message)
             
         elif type_message == 'chat_calling_group':  
             user_from = text_data_json['user_from']

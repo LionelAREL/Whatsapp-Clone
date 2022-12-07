@@ -29,6 +29,21 @@ def createPrivateMessage(user_from,user_to,message):
     chat_private.last_update = datetime.now()
     chat_private.save()
     print(f"create message {message_save}")
+
+@database_sync_to_async
+def createPrivateMessageFile(user_from,user_to,message,file):
+    #check if chatPrivate exist
+    chat_private = ChatPrivate.get_chat(user_from.id, user_to.id)
+    if not chat_private:
+        chat_private = ChatPrivate.objects.create()
+        chat_private.users.add(user_from,user_to)
+        print(f"create private chat {chat_private}")
+    #create message
+    message_save = MessagePrivate.objects.create(user_from=user_from,user_to=user_to,message=message,chat=chat_private,file=file,type_message='FL')
+    chat_private.last_update = datetime.now()
+    chat_private.save()
+    print(f"create message {message_save}")
+
 @database_sync_to_async
 def createPrivateCalling(user_from,user_to,message):
     #check if chatPrivate exist
@@ -48,6 +63,16 @@ def createPrivateCalling(user_from,user_to,message):
 def createGroupMessage(user_from,chat_group,message):
     #create message
     message_save = MessageGroup.objects.create(user_from=user_from,message=message,chat_group=chat_group)
+    message_save.watched_users.add(user_from)
+    message_save.save()
+    chat_group.last_update = datetime.now()
+    chat_group.save()
+    print(f"create calling {message_save}")
+
+@database_sync_to_async
+def createGroupMessageFile(user_from,chat_group,message,file):
+    #create message
+    message_save = MessageGroup.objects.create(user_from=user_from,message=message,chat_group=chat_group,file=file,type_message="FL")
     message_save.watched_users.add(user_from)
     message_save.save()
     chat_group.last_update = datetime.now()
