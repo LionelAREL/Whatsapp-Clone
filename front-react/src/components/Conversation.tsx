@@ -25,7 +25,7 @@ const Conversation = ({selectedConversation}:any) => {
     const dispatch = useDispatch();
     const [messages,setMessages] = useState([]);
     const [callAudio,setCallAudio] = useState(false)
-    const [config,setConfig] = useState({token:"",appId:"d2160e16d6634613aba0588ea88fc4d8"})
+    const [config,setConfig] = useState({token:"",appId:"d2160e16d6634613aba0588ea88fc4d8",callingType:""})
     const chatSocket = useContext(WebSocketContext)
     const session = useSelector((state: RootState) => state.session)
     const theme = useTheme();
@@ -85,6 +85,7 @@ const Conversation = ({selectedConversation}:any) => {
         scrollToBottom();
     },[selectedConversation])
     
+    console.log(messages)
     useEffect(() => {
         function refreshConvListOnMessageReceive(e:any) {
             const data = JSON.parse(e.data);
@@ -102,7 +103,7 @@ const Conversation = ({selectedConversation}:any) => {
         scrollToBottom();
     },[messages]);
     
-    function handleCallVideo(click:any){
+    function handleCall(callingType="video"){
         const user_from = session.user.id
         if(selectedConversation.chat_type == 'chat_private'){
             let user_to:any = selectedConversation.users.id 
@@ -111,7 +112,7 @@ const Conversation = ({selectedConversation}:any) => {
                 'type': 'chat_calling_private',
                 'user_from' : user_from,
                 'user_to' : user_to,
-                'message': '',
+                'message': callingType,
             }));
             console.log("msg envoyé")
         }
@@ -122,17 +123,15 @@ const Conversation = ({selectedConversation}:any) => {
                 'type': 'chat_calling_group',
                 'user_from' : user_from,
                 'chat_group' : chat_group,
-                'message': '',
+                'message': callingType,
             }));
             console.log("msg envoyé")
         }
     }
-    const handleCallAudio = (click:any) => {
-        // setCallAudio((callAudio) => !callAudio)
-    }
+        
     return (
         <Container>
-            <CallContainer>{ session.isCalling ? <VideoCalling client={client} config={config} ></VideoCalling> : null}</CallContainer>
+            { session.isCalling ?<CallContainer> <VideoCalling client={client} config={config} ></VideoCalling> </CallContainer> : null }
             <Header>
                 <LeftHeader>
                     <IconClick>
@@ -146,10 +145,10 @@ const Conversation = ({selectedConversation}:any) => {
                 </LeftHeader>
                 <RightHeader>
                 {selectedConversation ? <>
-                    <IconClick onClick={handleCallVideo}>
+                    <IconClick onClick={() => handleCall("video")}>
                         <VideocamIconCustom sx={{ fontSize: 30 }}/>
                     </IconClick>
-                    <IconClick onClick={handleCallAudio}>
+                    <IconClick onClick={() => handleCall("audio")}>
                         <PhoneIconCustom />
                     </IconClick>
                 </> : null}
@@ -159,7 +158,7 @@ const Conversation = ({selectedConversation}:any) => {
                 </RightHeader>
             </Header>
             <Chat id='scroll' style={{background:`repeat url(${session.isDark ? backgroundDark : backgroundLight}`}}>
-            {messages.map((message:any,key) => {return <Message key={key} message={message} setConfig={setConfig} />})}
+            {messages.map((message:any) => {return <Message key={message.id} message={message} setConfig={setConfig} />})}
             </Chat>
             <InputContainer>
                 <IconClick>

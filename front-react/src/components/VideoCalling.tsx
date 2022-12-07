@@ -3,15 +3,19 @@ import { createClient, createMicrophoneAndCameraTracks, IAgoraRTCClient } from "
 import Controls from './Controls';
 import Video from './Video';
 import styled from 'styled-components';
-
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/Store';
 
 
 const VideoCalling = (props:{client:IAgoraRTCClient,config:any}) => {
+    const session = useSelector((state: RootState) => state.session)
     const useMicrophoneAndCameraTracks = createMicrophoneAndCameraTracks();
     const [users, setUsers] = React.useState<any>([]);
     const [start, setStart] = React.useState(true);
     const { ready, tracks } = useMicrophoneAndCameraTracks();
     const { client,config } = props;
+    const [trackState, setTrackState] = React.useState({ video: true, audio: true });
+
     console.log("######### ", config)
     console.log("########### Video Calling #############")
     React.useEffect(() => {
@@ -49,8 +53,8 @@ const VideoCalling = (props:{client:IAgoraRTCClient,config:any}) => {
             return prevUsers.filter((User:any) => User.uid !== user.uid);
           });
         });
-  
-        await client.join(config.appId, name, config.token, null);
+        console.log("#########", session.user.id)
+        await client.join(config.appId, name, config.token, session.user.id);
         if (tracks) await client.publish([tracks[0], tracks[1]]);
         setStart(true);
   
@@ -66,10 +70,6 @@ const VideoCalling = (props:{client:IAgoraRTCClient,config:any}) => {
          () => {
             client.leave();
             client.removeAllListeners();
-            if(tracks){
-                tracks[0].close();
-                tracks[1].close();
-            }
         }
       )
   
@@ -77,9 +77,9 @@ const VideoCalling = (props:{client:IAgoraRTCClient,config:any}) => {
   
     return (
       <Container style={{ height: "100%" }}>
-          {start && tracks && <Video tracks={tracks} users={users} />}
+          {start && tracks && <Video tracks={tracks} users={users} trackState={trackState} />}
           {ready && tracks && (
-            <Controls tracks={tracks} setStart={setStart} />
+            <Controls tracks={tracks} setStart={setStart} details={config} trackState={trackState} setTrackState={setTrackState} />
           )}
       </Container>
     );

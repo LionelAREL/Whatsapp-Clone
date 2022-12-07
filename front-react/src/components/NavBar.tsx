@@ -19,10 +19,11 @@ import AuthService from '../services/authentification';
 import { RootState } from '../redux/Store';
 
 const NavBar:any = ({setCurrentdispalySide,currentDisplaySide,noWatchedMessage}:any) => {
+    const session = useSelector((state: RootState) => state.session)
     const dispatch = useDispatch();
     const chatSocket = useContext(WebSocketContext)
     const [pin,setPin] = useState(true);
-    const session = useSelector((state: RootState) => state.session);
+    const theme:any = useTheme();
 
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -45,7 +46,6 @@ const NavBar:any = ({setCurrentdispalySide,currentDisplaySide,noWatchedMessage}:
       dispatch(setDark((event.target as any).value == 'true' ? true : false))
     }
 
-    const theme:any = useTheme();
 
     
     function logout() {
@@ -91,6 +91,10 @@ const NavBar:any = ({setCurrentdispalySide,currentDisplaySide,noWatchedMessage}:
         <Container>
             <IconButton>
                 <ProfilImage/>
+                <div style={{color:theme.fontColor, marginLeft:"20px"}}>
+                    {session.user.username}
+
+                </div>
             </IconButton>
             <IconContainer>
                 <Badge invisible={noWatchedMessage} sx={{ "& .MuiBadge-badge": {backgroundColor: theme.dotColorNotification}}} overlap="circular" badgeContent=" " variant="dot">
