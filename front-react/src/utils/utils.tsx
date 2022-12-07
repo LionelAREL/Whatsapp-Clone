@@ -1,3 +1,5 @@
+import Message from "../components/Message";
+
 export function isSelectedChat(socketData:any,selectedConversation:any){
     if(selectedConversation == null){
         return false;
@@ -21,4 +23,17 @@ export function checkPinMessageNavbar(convList:any){
         }
     }
     return boolConv;
+}
+
+
+export function isCallingAvailable(message:any):boolean{
+    const availabilityTime = 3550;
+    const messageDate = new Date(message.date) 
+    let diff = Math.abs(messageDate.getTime() - Date.now())
+    if (diff < availabilityTime * 1000){
+        return true
+    }
+    else{
+        return false
+    }
 }

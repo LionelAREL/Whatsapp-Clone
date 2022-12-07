@@ -1,16 +1,82 @@
-import { AnyAsyncThunk } from '@reduxjs/toolkit/dist/matchers';
-import React from 'react';
-import { useSelector } from 'react-redux';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
+import { setIsCalling } from '../redux/CounterSlice';
 import { RootState } from '../redux/Store';
+import { useDispatch, useSelector } from 'react-redux';
+import { Box, Button, Modal, Typography } from '@mui/material';
+import { isCallingAvailable } from '../utils/utils';
+import { CardMedia } from '@mui/material';
+import { Image } from 'mui-image'
+import React from 'react';
 
-const Message = ({message}:any) => {
+
+const Message = ({message, setConfig}:any) => {
+    const theme:any = useTheme();
+    const dispatch = useDispatch();
     const session = useSelector((state: RootState) => state.session)
+
     let date = new Date(message.date).toTimeString().substring(1,5);
-    if(message.message != ""){
+
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+    
+    function handleCallingClick(){
+        setConfig((config:any) => {
+            config.token = message.call_token;
+            config.channel = message.call_name;
+            config.callingType = message.message;
+            return config
+        })
+        dispatch(setIsCalling(true))
+    }
+
+    const style = {
+        position: 'absolute' as 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        border:"none",
+        // width: 400,
+        // bgcolor: 'background.paper',
+        // boxShadow: 24,
+        // p: 4,
+      };
+
+      
+    const modal = 
+    <Modal
+    open={open}
+    onClose={handleClose}
+    aria-labelledby={message.message}
+    >
+    <Box sx={style}>
+    <Image width={"80vw"} duration={0} src={message.image}></Image>
+    </Box>
+  </Modal>;
+
+    const callingMessage = `A ${message.message} call was launch !`;
+    const callingButton = "Join";
+    const callingButtonExpired = "Expired";
+
+    if( ( message.message != "" && message.type_message === "DM" ) || message.type_message === "CL"){
+        if (message.user_from === session?.user?.id){
         return (
             <Container>
-                {message.user_from === session?.user?.id  ? 
+                {message.type_message === "CL" ?
+                    <DmOutgoing>
+                        <Text>
+                        {callingMessage}
+                        </Text>
+                        {isCallingAvailable(message) ?
+                        <Button style={{backgroundColor:theme.colorIcon,marginTop:"10px"}} onClick={handleCallingClick}>{callingButton}</Button>
+                        : 
+                        <Button style={{backgroundColor:theme.colorIcon,marginTop:"10px",cursor:"default"}} >{callingButtonExpired}</Button>
+                         }
+                        <DateView>
+                            {date}
+                        </DateView>
+                    </DmOutgoing>
+                 :
                     <DmOutgoing>
                         <Text>
                             {message.message}
@@ -19,19 +85,70 @@ const Message = ({message}:any) => {
                             {date}
                         </DateView>
                     </DmOutgoing>
-                :
-                    <DmIncoming>
-                        <Text>
-                            {message.message}
-                        </Text>
+                 }
+            </Container>)}
+        else{
+            return(
+                <Container>
+                    {message.type_message === "CL" ?
+                        <DmIncoming>
+                            <Text>
+                            {callingMessage}
+                            </Text>
+                            {isCallingAvailable(message) ?
+                            <Button style={{backgroundColor:theme.colorIcon,marginTop:"10px"}} onClick={handleCallingClick}>{callingButton}</Button>
+                            : 
+                            <Button style={{backgroundColor:theme.colorIcon,marginTop:"10px",cursor:"default"}} >{callingButtonExpired}</Button>
+                            }
+                            <DateView>
+                                {date}
+                            </DateView>
+                        </DmIncoming>
+                    :
+                        <DmIncoming>
+                            <Text>
+                                {message.message}
+                            </Text>
+                            <DateView>
+                                {date}
+                            </DateView>
+                        </DmIncoming>
+                    }
+                    
+        
+                </Container>
+            );
+        }
+    }
+    else if (message.type_message === "IMG"){
+        if (message.user_from === session?.user?.id){
+        return(
+            <DmOutgoing>
+                    {modal}
+                    <CardMedia onClick={handleOpen} style={{height:"300px",width:"300px",cursor:"pointer"}} image={message.image}></CardMedia>
+                    <Text style={{marginTop:"8px"}}>
+                        {message.message}
+                    </Text>
                         <DateView>
                             {date}
                         </DateView>
-                    </DmIncoming>
-                }
-    
-            </Container>
-        );
+                </DmOutgoing>
+            );
+        }
+        else{
+            return (
+                <DmIncoming>
+                    {modal}
+                    <CardMedia onClick={handleOpen} style={{height:"300px",width:"300px",cursor:"pointer"}} image={message.image}></CardMedia>
+                    <Text style={{marginTop:"8px"}}>
+                        {message.message}
+                    </Text>
+                    <DateView>
+                        {date}
+                    </DateView>
+                </DmIncoming>
+            )
+        }
     }
     else{
         return (

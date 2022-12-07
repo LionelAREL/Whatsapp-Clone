@@ -148,6 +148,7 @@ AUTH_USER_MODEL = 'core.User'
 ###CORS
 CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS',default=[],cast=lambda v: [s.strip() for s in v.split(',')])
 CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS',default=[],cast=lambda v: [s.strip() for s in v.split(',')])
+print(CSRF_TRUSTED_ORIGINS)
 
 CORS_ALLOW_CREDENTIALS = config('CORS_ALLOW_CREDENTIALS',default=True,cast=bool)
 CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']

@@ -6,13 +6,15 @@ import AuthService from '../services/authentification'
 export interface Session {
   user: any,
   loading:boolean,
-  isDark:boolean
+  isDark:boolean,
+  isCalling:boolean
 }
 
 const initialState: Session = {
     user: null,
     loading:false,
     isDark:true,
+    isCalling:false,
 }
 
 export const sessionSlice = createSlice({
@@ -30,14 +32,17 @@ export const sessionSlice = createSlice({
     loading:(state) => {
         state.loading = true;
     },
-    setDark:(state,action: PayloadAction<any>) => {
+    setDark:(state,action: PayloadAction<boolean>) => {
       state.isDark = action.payload;
-    }
+    },
+    setIsCalling:(state,action: PayloadAction<boolean>) => {
+      state.isCalling = action.payload;
+    },
   },
 })
 
 // Action creators are generated for each case reducer function
 
-export const {logoutSession, setSession, loading, setDark} = sessionSlice.actions
+export const {logoutSession, setSession, loading, setDark, setIsCalling } = sessionSlice.actions
 
 export default sessionSlice;
