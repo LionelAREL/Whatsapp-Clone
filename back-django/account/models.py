@@ -24,8 +24,8 @@ class Message(models.Model):
     image = models.ImageField(default=None,null=True)
     message = models.CharField(max_length=1000)
     date = models.DateTimeField(auto_now=True)
-    call_token = models.CharField(max_length=500,null=True)
-    call_name = models.CharField(max_length=500,null=True)
+    call_token = models.CharField(max_length=500,null=True,required=False)
+    call_name = models.CharField(max_length=500,null=True,required=False)
     user_from = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,related_name="user_from",null=True)
 
 class MessagePrivate(Message):
