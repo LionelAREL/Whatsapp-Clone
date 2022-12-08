@@ -167,7 +167,7 @@ const IconClick = styled(IconButton)`
 
 const Container = styled.div`
     width: 30vw !important;
-    min-width: 300px !important;
+    min-width: 350px !important;
     background-color:${(props) => props.theme.backgroundColor};
     display: flex;
     flex-direction: row;
