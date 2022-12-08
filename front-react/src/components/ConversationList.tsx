@@ -4,9 +4,10 @@ import fetchData from '../services/fetch';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LoadingWrapper from './LoadingWrapper';
 import { WebSocketContext } from '../services/websocket';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/Store';
 import { checkPinMessageNavbar, isSelectedChat } from '../utils/utils';
+import { setIsCalling } from '../redux/CounterSlice';
 
 
 const ConversationList = ({setSelectedConversation,setNoWatchedMessage,selectedConversation,currentDisplaySide}:any) => {
@@ -15,6 +16,8 @@ const ConversationList = ({setSelectedConversation,setNoWatchedMessage,selectedC
     const chatSocket:any = useContext(WebSocketContext);
     const session = useSelector((state: RootState) => state.session)
     const theme:any = useTheme();
+    const dispatch = useDispatch();
+
     useEffect(() => {
         getChats();
         function refreshOnMessage(e:any) {
@@ -68,6 +71,12 @@ const ConversationList = ({setSelectedConversation,setNoWatchedMessage,selectedC
 
     function clickConversation(e:any,conversation:any){
         e?.preventDefault();
+        if(conversation.chat_type !== selectedConversation?.chat_type || conversation.id !== selectedConversation?.id){
+            if(session.isCalling){
+                dispatch(setIsCalling(false))
+            }
+        }
+        console.log("###123123123")
         //set view message
          if(conversation.chat_type == 'chat_private'){
                   //send watched message
@@ -121,7 +130,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: column;
     background-color: ${(props) => props.theme.backgroundColor};
-    height: calc(100vh - 56px);
+    height: 100vh;
     min-height: 700px;
     overflow: scroll;
     border-right: 1px solid ${(props) => props.theme.borderColor};

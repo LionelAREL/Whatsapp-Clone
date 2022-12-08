@@ -27,7 +27,9 @@ const VideoCalling = (props:{client:IAgoraRTCClient,config:any}) => {
           console.log("subscribe success");
           if (mediaType === "video") {
             setUsers((prevUsers:any) => {
-              return [...prevUsers, user];
+              if(!prevUsers.some((u:any) => u.uid === user.uid)){
+                return [...prevUsers, user];
+              }
             });
           }
           if (mediaType === "audio") {

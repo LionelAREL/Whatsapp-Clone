@@ -15,3 +15,7 @@ class Friend(models.Model):
     friends = models.ManyToManyField(User,blank=True,related_name='friends_list')
     user = models.OneToOneField(User, on_delete=models.CASCADE,related_name='friends')
     request_friends = models.ManyToManyField(User,blank=True,related_name='request_friends')
+
+    def __str__(self):
+        return f'{self.user} friends'
+    

@@ -1,4 +1,7 @@
-body{
-    min-width: 1000px;
-    min-height: 700px;
+body,html {
+    margin: 0;
+    padding: 0;
+}
+* {
+    box-sizing: border-box;
 }

@@ -68,9 +68,9 @@ const Message = ({message, setConfig}:any) => {
                         {callingMessage}
                         </Text>
                         {isCallingAvailable(message) ?
-                        <Button style={{backgroundColor:theme.backgroundColor,marginTop:"10px",color:theme.fontColor}} onClick={handleCallingClick}>{callingButton}</Button>
+                        <Button style={{backgroundColor:theme.colorMessageIncoming,marginTop:"10px",color:theme.fontColor}} onClick={handleCallingClick}>{callingButton}</Button>
                         : 
-                        <Button style={{backgroundColor:theme.backgroundColor,marginTop:"10px",cursor:"default",color:theme.fontColor}} >{callingButtonExpired}</Button>
+                        <Button style={{backgroundColor:theme.colorMessageIncoming,marginTop:"10px",cursor:"default",color:theme.fontColor}} >{callingButtonExpired}</Button>
                          }
                         <DateView>
                             {date}
@@ -96,9 +96,9 @@ const Message = ({message, setConfig}:any) => {
                             {callingMessage}
                             </Text>
                             {isCallingAvailable(message) ?
-                            <Button style={{backgroundColor:theme.backgroundColor,marginTop:"10px",color:theme.fontColor}} onClick={handleCallingClick}>{callingButton}</Button>
+                            <Button style={{backgroundColor:theme.colorMessageOutgoing,marginTop:"10px",color:theme.fontColor}} onClick={handleCallingClick}>{callingButton}</Button>
                             : 
-                            <Button style={{backgroundColor:theme.backgroundColor,marginTop:"10px",cursor:"default",color:theme.fontColor}} >{callingButtonExpired}</Button>
+                            <Button style={{backgroundColor:theme.colorMessageOutgoing,marginTop:"10px",cursor:"default",color:theme.fontColor}} >{callingButtonExpired}</Button>
                             }
                             <DateView>
                                 {date}

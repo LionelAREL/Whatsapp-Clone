@@ -195,7 +195,9 @@ const Conversation = ({selectedConversation}:any) => {
 
     return (
         <Container>
+            <Ref>
             { session.isCalling ?<CallContainer> <VideoCalling client={client} config={config} ></VideoCalling> </CallContainer> : null }
+            </Ref>
             <Header>
                 <LeftHeader>
                     <IconClick>
@@ -249,6 +251,10 @@ const Conversation = ({selectedConversation}:any) => {
     );
 };
 
+const Ref = styled.div`
+position: relative;
+`
+
 const InputFile = styled.input`
     display: none;
 `
@@ -259,6 +265,7 @@ const FileName = styled.div`
     white-space: wrap;
     max-width: 100px;
     word-break: break-all;
+    color:${(props) => props.theme.fontColor};
     
     @supports (-webkit-line-clamp: 3) {
       overflow: hidden;
@@ -271,19 +278,20 @@ const FileName = styled.div`
 `
 
 const CallContainer = styled.div`
-    position: absolute;
+    position:absolute;
     top:55px;
-    width: 70%;
+    width: 70vw;
+    min-width: 700px;
     height: 400px;
     z-index: 100;
 `
 const IconInputMessageSize = "80px"; 
 
 const Container = styled.div`
-    width:70%;
-    height:100vh;
-    `;
-    const Header = styled.div`
+    width:70vw;
+    min-width:700px;
+`;
+const Header = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -291,11 +299,16 @@ const Container = styled.div`
     background-color: ${(props) => props.theme.backgroundColor};
     border-left: 1px ${(props) => props.theme.borderColor2} solid;
     height:55px;
+    width:70vw;
+    min-width: 700px;
+
     `;
 const Name = styled.div`
     color:${(props) => props.theme.fontColor};
 `;
-const LeftHeader = styled.div``
+const LeftHeader = styled.div`
+
+`
 const RightHeader = styled.div``
 const ProfilImage = styled(AccountCircleIcon)`
     color:${(props) => props.theme.colorProfilDefault};
@@ -324,18 +337,13 @@ const PhoneIconCustom = styled(PhoneIcon)`
 const InputContainer = styled.div`
     background-color:${(props) => props.theme.backgroundColor};
     height:70px;
-    width:70%;
+    width:70vw;
+    overflow: hidden;
     min-width: 700px;
-    position:absolute;
     display: flex;
-    bottom: 0px;
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
-    @media (max-height:755px) {
-        top:686px;
-        
-    };
 `;
 const Micro = styled(MicIcon)`
     width: ${(props) => props.theme.iconInputMessageSize};
@@ -363,13 +371,15 @@ const Input = styled.input`
 `;
 const Chat = styled.div`
     height: calc(100% - 125px);
-    min-height: 700px !important;
+    min-height: calc(700px - 125px) !important;
+    min-width: 700px !important;
+    width: 70vw;
     overflow: scroll;
     -ms-overflow-style: none; /* for Internet Explorer, Edge */
         scrollbar-width: none; /* for Firefox */
         overflow-y: scroll;
         ::-webkit-scrollbar {
         display: none; /* for Chrome, Safari, and Opera */
-        }
+    }
     `
 export default Conversation;

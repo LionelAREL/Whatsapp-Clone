@@ -74,12 +74,21 @@ const Chat = () => {
 };
 
 const LeftSide = styled.div`
+    min-width: 350px;
+    overflow: hidden !important;
     height:100vh;
-    min-height: 700px !important;
-`;
+    min-height: 700px;
+    `;
 const Container = styled.div`
+    height:100vh;
     display:flex;
     flex-direction: row;
+    @media(max-width: 1170px) {
+        overflow-y:hidden;
+    }
+    @media(max-height: 700px) {
+        overflow-y:scroll;
+    }
 `;
 
 export default Chat;
