@@ -6,8 +6,8 @@ import MicIcon from '@mui/icons-material/Mic';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../redux/Store';
-import { setIsCalling } from '../redux/CounterSlice';
+import { RootState } from '../../redux/Store';
+import { setIsCalling } from '../../redux/CounterSlice';
 
 
 const Controls = (props:any) => {
@@ -30,17 +30,14 @@ const Controls = (props:any) => {
   
     const leaveChannel = async () => {
         dispatch(setIsCalling(false))
-        console.log("false")
         await client.leave();
         client.removeAllListeners();
         tracks[0].close();
         tracks[1].close();
         setStart(false);
-        console.log("######### FALSE ############")
     };
 
     React.useEffect(() => {
-        console.log("########## audio",details)
         if(details.callingType == "audio"){
             mute("video")
         }

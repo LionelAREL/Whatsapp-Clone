@@ -1,5 +1,4 @@
 import CircularProgress from '@mui/material/CircularProgress';
-import React from 'react';
 import styled from 'styled-components';
 
 const LoadingWrapper = (props:any) => {

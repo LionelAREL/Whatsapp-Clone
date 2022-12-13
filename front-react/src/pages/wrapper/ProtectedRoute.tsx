@@ -1,11 +1,9 @@
-import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Navigate, Outlet } from "react-router-dom";
 import { RootState } from '../../redux/Store';
 import Cookies from 'universal-cookie';
 import AuthService from '../../services/authentification';
 import {loading, setSession} from './../../redux/CounterSlice'
-import { WebSocketProvider } from '../../services/websocket';
 import { CircularProgress } from '@mui/material';
 import App from './App';
 import styled from 'styled-components';
@@ -16,11 +14,11 @@ const ProtectedRoute = () => {
     const cookie = new Cookies();
     if(session.user != null && session.loading == false && cookie.get('sessionid')!=undefined){
         //connected
-        console.log("connected")
+        console.log("Protected Route")
         return (
             <>
                 <App>
-                <Outlet/>
+                    <Outlet/>
                 </App>
             </>
         );
@@ -33,9 +31,9 @@ const ProtectedRoute = () => {
             AuthService.getSession().then((session:any) => {dispatch(setSession(session.user))})
         }
         return (
-        <Container>
-            <CircularProgress color="success" />
-        </Container>
+            <Container>
+                <CircularProgress color="success" />
+            </Container>
         );
     }
     else{

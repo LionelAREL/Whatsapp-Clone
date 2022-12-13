@@ -3,11 +3,11 @@ import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import fetchData from '../services/fetch';
+import fetchData from '../../services/fetch';
 import { useSelector } from 'react-redux';
-import { RootState } from '../redux/Store';
-import { WebSocketContext } from '../services/websocket';
-import LoadingWrapper from './LoadingWrapper';
+import { RootState } from '../../redux/Store';
+import { WebSocketContext } from '../../services/websocket';
+import LoadingWrapper from '../loaders/LoadingWrapper';
 
 const FriendsRequest = () => {
     const [friendsRequest,setFriendsRequest] = useState([]);

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Conversation from '../components/Conversation';
-import ConversationList from '../components/ConversationList';
-import CreateGroup from '../components/CreateGroup';
-import Displayer from '../components/Displayer';
-import FriendsRequest from '../components/FriendsRequest';
+import ConversationList from '../components/displayers/ConversationList';
+import CreateGroup from '../components/displayers/CreateGroup';
+import Displayer from '../components/displayers/Displayer';
+import FriendsRequest from '../components/displayers/FriendsRequest';
 import NavBar from '../components/NavBar';
-import SearchFriends from '../components/SearchFriends';
+import SearchFriends from '../components/displayers/SearchFriends';
 import {SOCKET_URL, WebSocketProvider} from '../services/websocket';
 
 

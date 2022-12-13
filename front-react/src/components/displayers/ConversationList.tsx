@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled, { useTheme } from 'styled-components';
-import fetchData from '../services/fetch';
+import fetchData from '../../services/fetch';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import LoadingWrapper from './LoadingWrapper';
-import { WebSocketContext } from '../services/websocket';
+import LoadingWrapper from '../loaders/LoadingWrapper';
+import { WebSocketContext } from '../../services/websocket';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../redux/Store';
-import { checkPinMessageNavbar, isSelectedChat } from '../utils/utils';
-import { setIsCalling } from '../redux/CounterSlice';
+import { RootState } from '../../redux/Store';
+import { checkPinMessageNavbar, isSelectedChat } from '../../utils/utils';
+import { setIsCalling } from '../../redux/CounterSlice';
 
 
 const ConversationList = ({setSelectedConversation,setNoWatchedMessage,selectedConversation,currentDisplaySide}:any) => {
