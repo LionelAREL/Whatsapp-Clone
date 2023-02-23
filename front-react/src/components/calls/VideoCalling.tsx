@@ -1,10 +1,10 @@
 import React from 'react';
-import { createClient, createMicrophoneAndCameraTracks, IAgoraRTCClient } from "agora-rtc-react";
+import { createMicrophoneAndCameraTracks, IAgoraRTCClient } from "agora-rtc-react";
 import Controls from './Controls';
 import Video from './Video';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import { RootState } from '../redux/Store';
+import { RootState } from '../../redux/Store';
 
 
 const VideoCalling = (props:{client:IAgoraRTCClient,config:any}) => {
@@ -16,12 +16,9 @@ const VideoCalling = (props:{client:IAgoraRTCClient,config:any}) => {
     const { client,config } = props;
     const [trackState, setTrackState] = React.useState({ video: true, audio: true });
 
-    console.log("######### ", config)
-    console.log("########### Video Calling #############")
     React.useEffect(() => {
     // function to initialise the SDK
     let init = async (name: string) => {
-        console.log("############## INIT ##########", name);
         client.on("user-published", async (user, mediaType) => {
           await client.subscribe(user, mediaType);
           console.log("subscribe success");
@@ -55,7 +52,6 @@ const VideoCalling = (props:{client:IAgoraRTCClient,config:any}) => {
             return prevUsers.filter((User:any) => User.uid !== user.uid);
           });
         });
-        console.log("#########", session.user.id)
         await client.join(config.appId, name, config.token, session.user.id);
         if (tracks) await client.publish([tracks[0], tracks[1]]);
         setStart(true);
@@ -65,7 +61,6 @@ const VideoCalling = (props:{client:IAgoraRTCClient,config:any}) => {
       if (ready && tracks) {
         console.log("init ready");
         init(config.channel);
-        console.log("################ USERS #########",users)
       }
 
       return(

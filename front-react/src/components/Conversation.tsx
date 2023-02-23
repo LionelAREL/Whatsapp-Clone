@@ -14,17 +14,18 @@ import fetchData from '../services/fetch';
 import { WebSocketContext } from '../services/websocket';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/Store';
-import VideoCalling from './VideoCalling';
+import VideoCalling from './calls/VideoCalling';
 import PhoneIcon from '@mui/icons-material/Phone';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import { ClientConfig, createClient } from 'agora-rtc-react';
 import AWS from "aws-sdk";
+import environments from '../environment/environment';
 
 
 
 const Conversation = ({selectedConversation}:any) => {
     const [messages,setMessages] = useState([]);
-    const [config,setConfig] = useState({token:"",appId:"d2160e16d6634613aba0588ea88fc4d8",callingType:""})
+    const [config,setConfig] = useState({token:"",appId:environments.appId,callingType:""})
     const chatSocket = useContext(WebSocketContext)
     const session = useSelector((state: RootState) => state.session)
 
@@ -33,16 +34,11 @@ const Conversation = ({selectedConversation}:any) => {
 
     const [file, setFile] = useState<any>(undefined);
 
-    const S3_BUCKET ='whatsapp-clone-bucket-files';
-    const REGION ='eu-west-3';
-    const ACCESS_KEY ='AKIA2LKTDJEARTZNKV56';
-    const SECRET_ACCESS_KEY ='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';
-
     const awsConfig = {
-        bucketName: S3_BUCKET,
-        region: REGION,
-        accessKeyId: ACCESS_KEY,
-        secretAccessKey: SECRET_ACCESS_KEY,
+        bucketName: environments.S3_BUCKET,
+        region: environments.REGION,
+        accessKeyId: environments.ACCESS_KEY,
+        secretAccessKey: environments.SECRET_ACCESS_KEY,
     }
 
     AWS.config.update({
@@ -53,7 +49,7 @@ const Conversation = ({selectedConversation}:any) => {
       
       const s3 = new AWS.S3({
         apiVersion: "2006-03-01",
-        params: { Bucket: S3_BUCKET }
+        params: { Bucket: environments.S3_BUCKET }
       });
 
       function uploadFile() {
@@ -67,7 +63,6 @@ const Conversation = ({selectedConversation}:any) => {
         var folderKey = encodeURIComponent(session.user.id) + "/";
       
         var fileKey = folderKey + fileName;
-        console.log(file)
         // Use S3 ManagedUpload class as it supports multipart uploads
         var upload = new AWS.S3.ManagedUpload({
           params: {
@@ -101,8 +96,6 @@ const Conversation = ({selectedConversation}:any) => {
     
     function sendMessage () {
         uploadFile().then((data:any) => {
-            console.log("NIIIIICE SEND WiTH WEBSOCKET", data,data.Location)
-
             const messageInputDom = document.querySelector('#send');
             const message:any = (messageInputDom as any).value;
             const user_from = session.user.id

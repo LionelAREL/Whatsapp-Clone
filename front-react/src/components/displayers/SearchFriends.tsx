@@ -1,12 +1,12 @@
 import React, { useContext, useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { RootState } from '../redux/Store';
-import fetchData from '../services/fetch';
-import { WebSocketContext } from '../services/websocket';
+import { RootState } from '../../redux/Store';
+import fetchData from '../../services/fetch';
+import { WebSocketContext } from '../../services/websocket';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Button from '@mui/material/Button';
-import LoadingWrapper from './LoadingWrapper';
+import LoadingWrapper from '../loaders/LoadingWrapper';
 
 
 

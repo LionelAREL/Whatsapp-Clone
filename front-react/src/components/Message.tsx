@@ -42,7 +42,6 @@ const Message = ({message, setConfig}:any) => {
         // p: 4,
       };
 
-    console.log(message)
     const modal = 
     <Modal
     open={open}

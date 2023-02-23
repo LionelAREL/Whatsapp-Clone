@@ -1,20 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import fetchData from '../services/fetch'
-import AuthService from '../services/authentification'
-
-export interface Session {
-  user: any,
-  loading:boolean,
-  isDark:boolean,
-  isCalling:boolean
-}
+import { Session, User } from '../models/interface';
 
 const initialState: Session = {
-    user: null,
-    loading:false,
-    isDark:true,
-    isCalling:false,
+  user: null,
+  loading:false,
+  isDark:true,
+  isCalling:false,
 }
 
 export const sessionSlice = createSlice({
@@ -25,7 +17,8 @@ export const sessionSlice = createSlice({
       state.user = null;
       state.loading = false;
     },
-    setSession:(state,action: PayloadAction<any>) => {
+    setSession:(state,action: PayloadAction<User>) => {
+        console.log(action.payload)
         state.user = action.payload;
         state.loading = false;
     },
