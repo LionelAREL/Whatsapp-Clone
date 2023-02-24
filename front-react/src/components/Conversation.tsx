@@ -108,7 +108,7 @@ const Conversation = ({selectedConversation}:any) => {
                     'user_to' : user_to,
                     'message': message,
                     'format': file ? "FL" : "DM",
-                    'file' : data.Location ? data.Location : undefined
+                    'file' : data?.Location ? data.Location : undefined
                 }));
             (messageInputDom as any).value = '';
             console.log("msg envoyé")
@@ -122,7 +122,7 @@ const Conversation = ({selectedConversation}:any) => {
                     'chat_group' : chat_group,
                     'message': message,
                     'format': file ? "FL" : "DM",
-                    'file' : data.Location ? data.Location : undefined
+                    'file' : data?.Location ? data.Location : undefined
                 }));
                 (messageInputDom as any).value = '';
                 console.log("msg envoyé")
